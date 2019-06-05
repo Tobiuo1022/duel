@@ -1,5 +1,4 @@
 import coin
-import dealer
 
 class Player:
     playerNo = 0 #プレイヤーの番号.
@@ -7,34 +6,36 @@ class Player:
     money = 10000 #所持金.
     counter = 0 #カウンターの値
     bet = 0 #賭け金
-    # predict = 0 #予想した面.
-    coin = coin.Coin()
+    predict = 0 #予想した面.
     bluff = 0 #通常は偶数,嘘をつくと奇数が入る.
     douted = 0 #ダウト先のプレイヤー.
+
+    def __init__(self, playerNo):
+        self.playerNo = playerNo
 
     def betting(self):
         """
         コイントスの結果を予想して所持金を賭ける関数.
         """
+        print(str(self.playerNo) +'さん')
         print('どちらに賭けますか？(表, 裏)')
-        self.coin.num = self.answer('表', '裏') #入力
-        self.coin.face = self.coin.conversion(self.coin.num)
+        self.predict = self.answer('表', '裏') #入力
         print('いくら賭けますか？')
         self.bet = self.inputInt() #入力
         self.money -= self.bet
-        print(self.coin.face, self.bet) #出力確認用
+        print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.(現在の所持金'+ str(self.money) +'円)')
 
-    def CallOrFold(self, dealer):
+    def callOrFold(self, coin):
         """
         コイントスの結果と予想を判定して、降りるか降りないかを決める関数.
         """
-        if self.coin.num == dealer.coin.num: #プレイヤーとディーラーのコインが一致してるかの判定
+        print(str(self.playerNo) +'さん')
+        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.(降りる, 降りない)')
             self.bluff = self.answer('降りる', '降りない') + 1
         else:
             print('予想が外れました.(降りる, 降りない)')
             self.bluff = self.answer('降りる', '降りない')
-        print(self.bluff) #出力確認用
 
     def answer(self, zero, first):
         """
@@ -76,6 +77,27 @@ class Player:
             else: #所持金を超えた額を入力された場合.
                 print('賭け金が所持金を超えています.')
         return ans
+
+    #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
+    def test_betting(self, face, bet):
+        """
+        引数 :
+            face : 表は0,裏は1.
+            bet : 賭ける額.
+        """
+        self.predict = face
+        self.bet = bet
+        self.money -= self.bet
+
+    def test_callOrFold(self, coin, bluff):
+        """
+        引数 :
+            bluff : 当てて降りないなら2,降りるなら1.外して降りないなら1,降りるなら0.
+        """
+        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
+            self.bluff = bluff
+        else:
+            self.bluff = bluff
 
 if __name__ == '__main__':
     import doctest
