@@ -8,20 +8,21 @@ class Player:
     bet = 0 #賭け金
     predict = 0 #予想した面.
     bluff = 0 #通常は偶数,嘘をつくと奇数が入る.
-    douted = 0 #ダウト先のプレイヤー.
+    doute = 0 #ダウト先のプレイヤー.
 
-    def __init__(self, playerNo):
+    def __init__(self, playerNo, name):
         self.playerNo = playerNo
+        self.name = name
 
     def betting(self):
         """
         コイントスの結果を予想して所持金を賭ける関数.
         """
-        print(str(self.playerNo) +'さん')
+        print(str(self.name) +'さん')
         print('どちらに賭けますか？(表, 裏)')
         self.predict = self.answer('表', '裏') #入力
         print('いくら賭けますか？')
-        self.bet = self.inputInt() #入力
+        self.bet = self.inputBet() #入力
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.(現在の所持金'+ str(self.money) +'円)')
 
@@ -29,7 +30,7 @@ class Player:
         """
         コイントスの結果と予想を判定して、降りるか降りないかを決める関数.
         """
-        print(str(self.playerNo) +'さん')
+        print(str(self.name) +'さん')
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.(降りる, 降りない)')
             self.bluff = self.answer('降りる', '降りない') + 1
@@ -60,9 +61,9 @@ class Player:
                 print(zero + 'もしくは' + first + 'でお答えください.')
         return ans
 
-    def inputInt(self):
+    def inputBet(self):
         """
-        int型を標準入力するための関数.
+        賭け金を標準入力するための関数.
         """
         while True:
             try:
@@ -77,6 +78,36 @@ class Player:
             else: #所持金を超えた額を入力された場合.
                 print('賭け金が所持金を超えています.')
         return ans
+
+    def inputDoubt(self, p1, p2, p3):
+        """
+        任意のプレイヤーをダウトするための関数.
+        """
+        print(str(self.name) +'さん')
+        print('どのプレイヤーをダウトしますか？ ('+ str(p1.name) +', '+ str(p2.name) +', '+ str(p3.name) +', ダウトしない)')
+        doubtName = ''
+        while True:
+            doubtName = input()
+            if doubtName == p1.name:
+                doubt = p1.playerNo
+                break
+            elif doubtName == p2.name:
+                doubt = p2.playerNo
+                break
+            elif doubtName == p3.name:
+                doubt = p3.playerNo
+                break
+            elif doubtName == 'ダウトしない':
+                doubt = 0
+                break
+            else:
+                print('もう一度入力してください.')
+                continue
+        self.doubt = doubt
+        if self.doubt != 0:
+            print(doubtName +'さんをダウトします.')
+        else:
+            print('ダウトしません.')
 
     #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
     def test_betting(self, face, bet):

@@ -2,10 +2,10 @@
 >>> import dealer, player, coin
 >>> c = coin.Coin()
 >>> d = dealer.Dealer()
->>> p1 = player.Player(1)
->>> p2 = player.Player(2)
->>> p3 = player.Player(3)
->>> p4 = player.Player(4)
+>>> p1 = player.Player(1, '1さん')
+>>> p2 = player.Player(2, '2さん')
+>>> p3 = player.Player(3, '3さん')
+>>> p4 = player.Player(4, '4さん')
 
 >>> print('ゲームを開始します.')
 ゲームを開始します.
@@ -25,10 +25,10 @@
 
 >>> d.announce_bet(p1, p2, p3, p4)
 各プレイヤーの賭け金を公表します.
-1さん : 1000 (所持金 9000)
-2さん : 2000 (所持金 8000)
-3さん : 3000 (所持金 7000)
-4さん : 4000 (所持金 6000)
+1さんさん : 1000 (所持金 9000)
+2さんさん : 2000 (所持金 8000)
+3さんさん : 3000 (所持金 7000)
+4さんさん : 4000 (所持金 6000)
 
 >>> c.num = 1
 >>> c.face = coin.conversion(c.num)
@@ -39,8 +39,12 @@
 >>> p2.test_callOrFold(c, 1)
 >>> p3.test_callOrFold(c, 2)
 >>> p4.test_callOrFold(c, 1)
->>>
->>>
+
+>>> p1.doubt = 0
+>>> p1.doubt = 0
+>>> p1.doubt = 0
+>>> p1.doubt = 0
+
 >>>
 >>>
 >>>
@@ -57,6 +61,8 @@ def play(d, p1, p2, p3, p4):
     print(c.face +'が出ました.')
     print('-- Call or Fold --') #コールフェイズ
     callPhase(c, p1, p2, p3, p4)
+    print('-- DoubtPhase --') #ダウトフェイズ
+    doubtPhase(p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
     p1.betting()
@@ -70,14 +76,20 @@ def callPhase(c, p1, p2, p3, p4):
     p3.callOrFold(c)
     p4.callOrFold(c)
 
+def doubtPhase(p1, p2, p3, p4):
+    p1.inputDoubt(p2, p3, p4)
+    p2.inputDoubt(p1, p3, p4)
+    p3.inputDoubt(p1, p2, p4)
+    p4.inputDoubt(p1, p2, p3)
+
 if __name__ == '__main__':
     import dealer, player, coin
     c = coin.Coin()
     d = dealer.Dealer()
-    p1 = player.Player(1)
-    p2 = player.Player(2)
-    p3 = player.Player(3)
-    p4 = player.Player(4)
+    p1 = player.Player(1, '1さん')
+    p2 = player.Player(2, '2さん')
+    p3 = player.Player(3, '3さん')
+    p4 = player.Player(4, '4さん')
     play(d, p1, p2, p3, p4)
     import doctest
     doctest.testmod()
