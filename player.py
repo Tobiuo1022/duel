@@ -1,3 +1,5 @@
+import coin
+
 class Player:
     playerNo = 0 #プレイヤーの番号.
     name = '' #プレイヤーの名前.
@@ -5,7 +7,7 @@ class Player:
     counter = 0 #カウンターの値
     bet = 0 #賭け金
     predict = 0 #予想した面.
-    bluff = 0 #通常は偶数,嘘をつくと奇数が入る.
+    bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = 0 #ダウト先のプレイヤー.
 
     def __init__(self, playerNo, name):
@@ -31,13 +33,25 @@ class Player:
         print(str(self.name) +'さん')
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.(降りる, 降りない)')
-            self.bluff = self.answer('降りる', '降りない') + 1
+            ans = self.answer('降りる', '降りない')
+            if ans == 0:
+                self.bluff = 1
         else:
             print('予想が外れました.(降りる, 降りない)')
-            self.bluff = self.answer('降りる', '降りない')
+            ans = self.answer('降りる', '降りない')
+            if ans == 1:
+                self.bluff = 1
 
-    def detect(self):
-        pass
+    def detect(self, doubted):
+        if doubted != None:
+            print(doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
+            if doubted.bluff == 1:
+                doubted.money -= doubted.bet;
+                self.money += doubted.bet;
+                print(self.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ self.name +'へ移動します.')
+            else:
+                self.money -= doubted.bet/2
+                print(self.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
 
     def answer(self, zero, first):
         """
@@ -124,7 +138,7 @@ class Player:
     def test_callOrFold(self, coin, bluff):
         """
         引数 :
-            bluff : 当てて降りないなら2,降りるなら1.外して降りないなら1,降りるなら0.
+            bluff : 嘘をつかないなら0,嘘をつくなら1が入る.
         """
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             self.bluff = bluff
