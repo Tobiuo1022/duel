@@ -41,13 +41,18 @@
 >>> p4.test_callOrFold(c, 1)
 
 >>> p1.doubt = 0
->>> p1.doubt = 0
->>> p1.doubt = 0
->>> p1.doubt = 0
+>>> p2.doubt = 1
+>>> p3.doubt = 2
+>>> p4.doubt = 3
 
->>>
->>>
->>>
+>>> d.announce_doubt(p1, p2, p3, p4)
+ダウトの結果を公表します.
+2さん → 1さん
+3さん → 2さん
+4さん → 3さん
+
+>>> detectPhase(p1, p2, p3, p4)
+
 >>>
 """
 
@@ -63,6 +68,7 @@ def play(d, p1, p2, p3, p4):
     callPhase(c, p1, p2, p3, p4)
     print('-- DoubtPhase --') #ダウトフェイズ
     doubtPhase(p1, p2, p3, p4)
+    d.annouce_doubt(p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
     p1.betting()
@@ -81,6 +87,26 @@ def doubtPhase(p1, p2, p3, p4):
     p2.inputDoubt(p1, p3, p4)
     p3.inputDoubt(p1, p2, p4)
     p4.inputDoubt(p1, p2, p3)
+
+def detectPhase(p1, p2, p3, p4):
+    pass
+
+def linkNameId(id, p1, p2, p3, p4):
+    """
+    プレイヤーのIDを引数に対応したプレイヤーのnameを返す関数.
+    """
+    name = None
+    if id == 1:
+        name = p1.name
+    elif id == 2:
+        name = p2.name
+    elif id == 3:
+        name = p3.name
+    elif id == 4:
+        name = p4.name
+    else:
+        name = None
+    return name
 
 if __name__ == '__main__':
     import dealer, player, coin

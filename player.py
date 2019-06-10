@@ -1,14 +1,12 @@
-import coin
-
 class Player:
     playerNo = 0 #プレイヤーの番号.
-    name = '' #プレイヤーの名前
+    name = '' #プレイヤーの名前.
     money = 10000 #所持金.
     counter = 0 #カウンターの値
     bet = 0 #賭け金
     predict = 0 #予想した面.
     bluff = 0 #通常は偶数,嘘をつくと奇数が入る.
-    doute = 0 #ダウト先のプレイヤー.
+    doubt = 0 #ダウト先のプレイヤー.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
@@ -37,6 +35,9 @@ class Player:
         else:
             print('予想が外れました.(降りる, 降りない)')
             self.bluff = self.answer('降りる', '降りない')
+
+    def detect(self):
+        pass
 
     def answer(self, zero, first):
         """
