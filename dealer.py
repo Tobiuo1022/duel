@@ -20,9 +20,9 @@ class Dealer:
             print('ダウトしたプレイヤーはいませんでした.')
 
         for doubter in player:
-            doubted = main.linkNameId(doubter.doubt, p1, p2, p3, p4)
+            doubted = main.linkId(doubter.doubt, p1, p2, p3, p4)
             if doubted != None:
-                print(doubter.name +' → '+ doubted)
+                print(doubter.name +' → '+ doubted.name)
 
 if __name__ == '__main__':
     import doctest

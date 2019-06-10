@@ -91,22 +91,22 @@ def doubtPhase(p1, p2, p3, p4):
 def detectPhase(p1, p2, p3, p4):
     pass
 
-def linkNameId(id, p1, p2, p3, p4):
+def linkId(id, p1, p2, p3, p4):
     """
-    プレイヤーのIDを引数に対応したプレイヤーのnameを返す関数.
+    プレイヤーのIDを引数に対応したplayerを返す関数.
     """
-    name = None
+    player = None
     if id == 1:
-        name = p1.name
+        player = p1
     elif id == 2:
-        name = p2.name
+        player = p2
     elif id == 3:
-        name = p3.name
+        player = p3
     elif id == 4:
-        name = p4.name
+        player = p4
     else:
-        name = None
-    return name
+        player = None
+    return player
 
 if __name__ == '__main__':
     import dealer, player, coin
