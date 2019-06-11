@@ -42,63 +42,70 @@ False
 3さんさん : 3000 (所持金 7000)
 4さんさん : 4000 (所持金 6000)
 
->>> c.num = 1
+>>> c.num = 0
 >>> c.face = coin.conversion(c.num)
 >>> print(c.face +'が出ました.')
-裏が出ました.
+表が出ました.
 
->>> p1.test_callOrFold(1)
->>> p2.test_callOrFold(1)
->>> p3.test_callOrFold(0)
+>>> p1.test_callOrFold(0)
+>>> p2.test_callOrFold(0)
+>>> p3.test_callOrFold(1)
 >>> p4.test_callOrFold(0)
+
+>>> d.announce_call(c, players)
+1さんさん : Call
+2さんさん : Call
+3さんさん : Call
+4さんさん : Fold
 
 >>> p1.doubt = 2
 >>> p2.doubt = 0
->>> p3.doubt = 4
->>> p4.doubt = 0
+>>> p3.doubt = 0
+>>> p4.doubt = 3
 
->>> d.announce_doubt(players)
+>>> d.test_announce_doubt(players)
 ダウトの結果を公表します.
 1さん → 2さん
-3さん → 4さん
+4さん → 3さん
 
->>> detectPhase(d, players)
+>>> d.test_detect(p1, p2)
 2さんが賭けた面は表でした.
-1さんのダウトは成功です.2000円が2さんから1さんへ移動します.
-4さんが賭けた面は裏でした.
-3さんのダウトは失敗です.ペナルティとして2000円を没収します.
+1さんのダウトは失敗です.ペナルティとして1000円を没収します.
+>>> d.test_detect(p4, p3)
+3さんが賭けた面は裏でした.
+4さんのダウトは成功です.3000円が3さんから4さんへ移動します.
 
 >>> print(p1.money)
-11000
+8000
 >>> print(p2.money)
-6000
+8000
 >>> print(p3.money)
-5000
+4000
 >>> print(p4.money)
-6000
+9000
 
 >>> payPhase(c, d, players)
 1さんへ2000円をお支払いします.
-残念ですが2さんの賭金は没収となります.
-3さんへ6000円をお支払いします.
-4さんへ8000円をお支払いします.
+2さんへ4000円をお支払いします.
+残念ですが3さんの賭金は没収となります.
+残念ですが4さんの賭金は没収となります.
 
 >>> print(p1.money, p1.bet)
-13000 0
+10000 0
 >>> print(p2.money, p1.bet)
-6000 0
+12000 0
 >>> print(int(p3.money), p1.bet)
-11000 0
+4000 0
 >>> print(p4.money, p1.bet)
-14000 0
+9000 0
 
->>> p2.money = 0
+>>> p1.money = 0
 >>> checkFinish(players)
-2さんさんの所持金が無くなりました.
+1さんさんの所持金が無くなりました.
 True
 
 >>> finishGame(players)
-4さんさんの勝利です!
+2さんさんの勝利です!
 
 >>>
 >>>
@@ -133,6 +140,8 @@ def play(d, players):
 
         print('-- PayPhase --') #ペイフェイズ
         payPhase(c, d, players)
+        pleaseEnter(1)
+
         if checkFinish(players) == True:
             break
         print('-- NextTurn --')
