@@ -10,6 +10,9 @@
 >>> print('ゲームを開始します.')
 ゲームを開始します.
 
+>>> checkFinish(p1, p2, p3, p4)
+False
+
 >>> d.announce_state(p1, p2, p3, p4)
 各プレイヤーの所持金です.
 1さんさん : 所持金 10000
@@ -88,9 +91,14 @@
 >>> print(p4.money, p1.bet)
 14000 0
 
->>>
->>>
->>>
+>>> p2.money = 0
+>>> checkFinish(p1, p2, p3, p4)
+2さんさんの所持金が無くなりました.
+True
+
+>>> finishGame(p1, p2, p3, p4)
+4さんさんの勝利です!
+
 >>>
 >>>
 >>>
@@ -101,20 +109,22 @@
 
 def play(d, p1, p2, p3, p4):
     print('ゲームを開始します.')
-    d.announce_state(p1, p2, p3, p4) #各プレイヤーの所持金を公表.
-    print('-- BetPhase --') #賭けフェイズ
-    betPhase(p1, p2, p3, p4)
-    d.announce_bet(p1, p2, p3, p4) #各プレイヤーの賭け金を公表.
-    print('-- CoinToss --')
-    c.toss()
-    print(c.face +'が出ました.')
-    print('-- Call or Fold --') #コールフェイズ
-    callPhase(c, p1, p2, p3, p4)
-    print('-- DoubtPhase --') #ダウトフェイズ
-    doubtPhase(p1, p2, p3, p4)
-    d.announce_doubt(p1, p2, p3, p4)
-    detectPhase(d, p1, p2, p3, p4)
-    payPhase(c, d, p1, p2, p3, p4)
+    while checkFinish(p1, p2, p3, p4) == False:
+        d.announce_state(p1, p2, p3, p4) #各プレイヤーの所持金を公表.
+        print('-- BetPhase --') #賭けフェイズ
+        betPhase(p1, p2, p3, p4)
+        d.announce_bet(p1, p2, p3, p4) #各プレイヤーの賭け金を公表.
+        print('-- CoinToss --')
+        c.toss()
+        print(c.face +'が出ました.')
+        print('-- Call or Fold --') #コールフェイズ
+        callPhase(c, p1, p2, p3, p4)
+        print('-- DoubtPhase --') #ダウトフェイズ
+        doubtPhase(p1, p2, p3, p4)
+        d.announce_doubt(p1, p2, p3, p4)
+        detectPhase(d, p1, p2, p3, p4)
+        payPhase(c, d, p1, p2, p3, p4)
+    finishGame(p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
     p1.betting()
@@ -162,6 +172,37 @@ def linkId(id, p1, p2, p3, p4):
     else:
         player = None
     return player
+
+def checkFinish(p1, p2, p3, p4):
+    """
+    各プレイヤーの所持金が0になったか確認する関数.
+    """
+    players = [p1, p2, p3, p4]
+    finish = False
+    for p in players:
+        if p.money <= 0:
+            finish = True
+            print(p.name +'さんの所持金が無くなりました.')
+    return finish
+
+def finishGame(p1, p2, p3, p4):
+    """
+    最も所持金の多いプレイヤーを勝者とする関数.
+    """
+    players = [p1, p2, p3, p4]
+    winners = []
+    maxim = 0
+    for p in players:
+        if p.money > maxim:
+            winners.clear()
+            winners.append(p)
+            maxim = p.money
+        elif p.money == maxim:
+            winners.append(p)
+
+    for winner in winners:
+        print(winner.name +'さん', end='')
+    print('の勝利です!')
 
 if __name__ == '__main__':
     import dealer, player, coin
