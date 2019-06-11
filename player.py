@@ -36,22 +36,13 @@ class Player:
             ans = self.answer('降りる', '降りない')
             if ans == 0:
                 self.bluff = 1
+                self.predict += self.bluff
         else:
             print('予想が外れました.(降りる, 降りない)')
             ans = self.answer('降りる', '降りない')
             if ans == 1:
                 self.bluff = 1
-
-    def detect(self, doubted):
-        if doubted != None:
-            print(doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
-            if doubted.bluff == 1:
-                doubted.money -= doubted.bet;
-                self.money += doubted.bet;
-                print(self.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ self.name +'へ移動します.')
-            else:
-                self.money -= doubted.bet/2
-                print(self.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
+                self.predict += self.bluff
 
     def answer(self, zero, first):
         """
@@ -135,15 +126,13 @@ class Player:
         self.bet = bet
         self.money -= self.bet
 
-    def test_callOrFold(self, coin, bluff):
+    def test_callOrFold(self, bluff):
         """
         引数 :
             bluff : 嘘をつかないなら0,嘘をつくなら1が入る.
         """
-        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
-            self.bluff = bluff
-        else:
-            self.bluff = bluff
+        self.bluff = bluff
+        self.predict += self.bluff
 
 if __name__ == '__main__':
     import doctest

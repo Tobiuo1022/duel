@@ -1,4 +1,4 @@
-import main
+import main, coin
 
 class Dealer:
 
@@ -23,6 +23,24 @@ class Dealer:
             doubted = main.linkId(doubter.doubt, p1, p2, p3, p4)
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
+
+    def detect(self, doubter, doubted):
+        """
+        指定した相手にダウトを行い,所持金の増減を行う関数.
+
+        引数 :
+            douted : 指定したプレイヤーが入る.
+        """
+        if doubted != None:
+            doubted.predict -= doubted.bluff
+            print(doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
+            if doubted.bluff == 1:
+                doubted.money -= doubted.bet;
+                doubter.money += doubted.bet;
+                print(doubter.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
+            else:
+                doubter.money -= doubted.bet/2
+                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
 
 if __name__ == '__main__':
     import doctest

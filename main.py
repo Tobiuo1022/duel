@@ -35,10 +35,10 @@
 >>> print(c.face +'が出ました.')
 裏が出ました.
 
->>> p1.test_callOrFold(c, 0)
->>> p2.test_callOrFold(c, 1)
->>> p3.test_callOrFold(c, 0)
->>> p4.test_callOrFold(c, 0)
+>>> p1.test_callOrFold(1)
+>>> p2.test_callOrFold(1)
+>>> p3.test_callOrFold(0)
+>>> p4.test_callOrFold(0)
 
 >>> p1.doubt = 2
 >>> p2.doubt = 0
@@ -50,7 +50,7 @@
 1さん → 2さん
 3さん → 4さん
 
->>> detectPhase(p1, p2, p3, p4)
+>>> detectPhase(d, p1, p2, p3, p4)
 2さんが賭けた面は表でした.
 1さんのダウトは成功です.2000円が2さんから1さんへ移動します.
 4さんが賭けた面は裏でした.
@@ -90,7 +90,7 @@ def play(d, p1, p2, p3, p4):
     print('-- DoubtPhase --') #ダウトフェイズ
     doubtPhase(p1, p2, p3, p4)
     d.announce_doubt(p1, p2, p3, p4)
-    detectPhase(p1, p2, p3, p4)
+    detectPhase(d, p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
     p1.betting()
@@ -110,11 +110,11 @@ def doubtPhase(p1, p2, p3, p4):
     p3.inputDoubt(p1, p2, p4)
     p4.inputDoubt(p1, p2, p3)
 
-def detectPhase(p1, p2, p3, p4):
-    p1.detect(linkId(p1.doubt, p1, p2, p3, p4))
-    p2.detect(linkId(p2.doubt, p1, p2, p3, p4))
-    p3.detect(linkId(p3.doubt, p1, p2, p3, p4))
-    p4.detect(linkId(p4.doubt, p1, p2, p3, p4))
+def detectPhase(d, p1, p2, p3, p4):
+    d.detect(p1, linkId(p1.doubt, p1, p2, p3, p4))
+    d.detect(p2, linkId(p2.doubt, p1, p2, p3, p4))
+    d.detect(p3, linkId(p3.doubt, p1, p2, p3, p4))
+    d.detect(p4, linkId(p4.doubt, p1, p2, p3, p4))
 
 def linkId(id, p1, p2, p3, p4):
     """
