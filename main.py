@@ -9,6 +9,14 @@
 
 >>> print('ゲームを開始します.')
 ゲームを開始します.
+
+>>> d.announce_state(p1, p2, p3, p4)
+各プレイヤーの所持金です.
+1さんさん : 所持金 10000
+2さんさん : 所持金 10000
+3さんさん : 所持金 10000
+4さんさん : 所持金 10000
+
 >>> p1.test_betting(0, 1000)
 >>> p2.test_betting(0, 2000)
 >>> p3.test_betting(1, 3000)
@@ -93,6 +101,7 @@
 
 def play(d, p1, p2, p3, p4):
     print('ゲームを開始します.')
+    d.announce_state(p1, p2, p3, p4) #各プレイヤーの所持金を公表.
     print('-- BetPhase --') #賭けフェイズ
     betPhase(p1, p2, p3, p4)
     d.announce_bet(p1, p2, p3, p4) #各プレイヤーの賭け金を公表.
