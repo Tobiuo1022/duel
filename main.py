@@ -71,7 +71,7 @@ False
 11000
 >>> print(p2.money)
 6000
->>> print(int(p3.money))
+>>> print(p3.money)
 5000
 >>> print(p4.money)
 6000
@@ -123,7 +123,11 @@ def play(d, p1, p2, p3, p4):
         doubtPhase(p1, p2, p3, p4)
         d.announce_doubt(p1, p2, p3, p4)
         detectPhase(d, p1, p2, p3, p4)
+        print('-- PayPhase --') #ペイフェイズ
         payPhase(c, d, p1, p2, p3, p4)
+        if checkFinish(p1, p2, p3, p4) == True:
+            break
+        print('-- NextTurn --')
     finishGame(p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
@@ -205,7 +209,7 @@ def finishGame(p1, p2, p3, p4):
     print('の勝利です!')
 
 if __name__ == '__main__':
-    import dealer, player, coin
+    import dealer, player, coin, sys
     c = coin.Coin()
     d = dealer.Dealer()
     p1 = player.Player(1, '1さん')
