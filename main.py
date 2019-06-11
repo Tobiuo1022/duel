@@ -124,6 +124,7 @@ def play(d, players):
 
         print('-- Call or Fold --') #コールフェイズ
         callPhase(c, players)
+        d.announce_call(c, players)
 
         print('-- DoubtPhase --') #ダウトフェイズ
         doubtPhase(players)

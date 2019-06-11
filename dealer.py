@@ -12,6 +12,13 @@ class Dealer:
         for p in players:
             print(str(p.name) +'さん : '+ str(p.bet) +' (所持金 '+ str(p.money) +')')
 
+    def announce_call(self, coin, players):
+        for p in players:
+            if p.predict == coin.num:
+                print(p.name +'さん : Call')
+            else:
+                print(p.name +'さん : Fold')
+
     def announce_doubt(self, players):
         print('ダウトの結果を公表します.')
         print('Please Enter', end='')
