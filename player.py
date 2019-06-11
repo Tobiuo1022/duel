@@ -20,9 +20,9 @@ class Player:
         """
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
-        print('どちらに賭けますか？(表, 裏)(現在の所持金'+ str(self.money) +'円)')
+        print('どちらに賭けますか？(表, 裏)')
         self.predict = self.answer('表', '裏') #入力
-        print('いくら賭けますか？')
+        print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
         self.bet = self.inputBet() #入力
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
@@ -81,37 +81,37 @@ class Player:
                 ans = int(input())
             except ValueError: #int型以外を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('int型で入力してください.')
+                print('int型で入力してください.(現在の所持金'+ str(self.money) +'円)')
                 continue
             if 0 < ans and ans <= self.money:
                 break
             elif ans <= 0: #0以下を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('それでは賭けになりません.')
+                print('それでは賭けになりません.(現在の所持金'+ str(self.money) +'円)')
             else: #所持金を超えた額を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('賭け金が所持金を超えています.')
+                print('賭け金が所持金を超えています.(現在の所持金'+ str(self.money) +'円)')
         return ans
 
-    def inputDoubt(self, p1, p2, p3):
+    def inputDoubt(self, players):
         """
         任意のプレイヤーをダウトするための関数.
         """
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
         print('どのプレイヤーをダウトしますか？', end='')
-        print('('+ str(p1.name) +', '+ str(p2.name) +', '+ str(p3.name) +', ダウトしない)')
+        print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
         doubtName = ''
         while True:
             doubtName = input()
-            if doubtName == p1.name:
-                doubt = p1.playerNo
+            if doubtName == players[0].name:
+                doubt = players[0].playerNo
                 break
-            elif doubtName == p2.name:
-                doubt = p2.playerNo
+            elif doubtName == players[1].name:
+                doubt = players[1].playerNo
                 break
-            elif doubtName == p3.name:
-                doubt = p3.playerNo
+            elif doubtName == players[2].name:
+                doubt = players[2].playerNo
                 break
             elif doubtName == 'ダウトしない':
                 doubt = 0
@@ -119,7 +119,7 @@ class Player:
             else:
                 print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
-                print('('+ str(p1.name) +', '+ str(p2.name) +', '+ str(p3.name) +', ダウトしない)')
+                print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
                 continue
         self.doubt = doubt
         if self.doubt != 0:

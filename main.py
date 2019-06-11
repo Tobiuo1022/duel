@@ -6,14 +6,15 @@
 >>> p2 = player.Player(2, '2さん')
 >>> p3 = player.Player(3, '3さん')
 >>> p4 = player.Player(4, '4さん')
+>>> players = [p1, p2, p3, p4]
 
 >>> print('ゲームを開始します.')
 ゲームを開始します.
 
->>> checkFinish(p1, p2, p3, p4)
+>>> checkFinish(players)
 False
 
->>> d.announce_state(p1, p2, p3, p4)
+>>> d.announce_state(players)
 各プレイヤーの所持金です.
 1さんさん : 所持金 10000
 2さんさん : 所持金 10000
@@ -34,7 +35,7 @@ False
 >>> print(p4.predict, p4.bet, p4.money)
 1 4000 6000
 
->>> d.announce_bet(p1, p2, p3, p4)
+>>> d.announce_bet(players)
 各プレイヤーの賭け金を公表します.
 1さんさん : 1000 (所持金 9000)
 2さんさん : 2000 (所持金 8000)
@@ -56,12 +57,12 @@ False
 >>> p3.doubt = 4
 >>> p4.doubt = 0
 
->>> d.announce_doubt(p1, p2, p3, p4)
+>>> d.announce_doubt(players)
 ダウトの結果を公表します.
 1さん → 2さん
 3さん → 4さん
 
->>> detectPhase(d, p1, p2, p3, p4)
+>>> detectPhase(d, players)
 2さんが賭けた面は表でした.
 1さんのダウトは成功です.2000円が2さんから1さんへ移動します.
 4さんが賭けた面は裏でした.
@@ -76,7 +77,7 @@ False
 >>> print(p4.money)
 6000
 
->>> payPhase(c, d, p1, p2, p3, p4)
+>>> payPhase(c, d, players)
 1さんへ2000円をお支払いします.
 残念ですが2さんの賭金は没収となります.
 3さんへ6000円をお支払いします.
@@ -92,11 +93,11 @@ False
 14000 0
 
 >>> p2.money = 0
->>> checkFinish(p1, p2, p3, p4)
+>>> checkFinish(players)
 2さんさんの所持金が無くなりました.
 True
 
->>> finishGame(p1, p2, p3, p4)
+>>> finishGame(players)
 4さんさんの勝利です!
 
 >>>
@@ -107,14 +108,14 @@ True
 >>>
 """
 
-def play(d, p1, p2, p3, p4):
+def play(d, players):
     print('ゲームを開始します.')
-    while checkFinish(p1, p2, p3, p4) == False:
-        d.announce_state(p1, p2, p3, p4) #各プレイヤーの所持金を公表.
+    while checkFinish(players) == False:
+        d.announce_state(players) #各プレイヤーの所持金を公表.
 
         print('-- BetPhase --') #賭けフェイズ
-        betPhase(p1, p2, p3, p4)
-        d.announce_bet(p1, p2, p3, p4) #各プレイヤーの賭け金を公表.
+        betPhase(players)
+        d.announce_bet(players) #各プレイヤーの賭け金を公表.
 
         print('-- CoinToss --') #コイントス
         c.toss()
@@ -122,83 +123,57 @@ def play(d, p1, p2, p3, p4):
         pleaseEnter(1)
 
         print('-- Call or Fold --') #コールフェイズ
-        callPhase(c, p1, p2, p3, p4)
+        callPhase(c, players)
 
         print('-- DoubtPhase --') #ダウトフェイズ
-        doubtPhase(p1, p2, p3, p4)
-        d.announce_doubt(p1, p2, p3, p4)
-        detectPhase(d, p1, p2, p3, p4)
+        doubtPhase(players)
+        d.announce_doubt(players)
+        detectPhase(d, players)
 
         print('-- PayPhase --') #ペイフェイズ
-        payPhase(c, d, p1, p2, p3, p4)
-        if checkFinish(p1, p2, p3, p4) == True:
+        payPhase(c, d, players)
+        if checkFinish(players) == True:
             break
         print('-- NextTurn --')
-    finishGame(p1, p2, p3, p4)
+    finishGame(players)
 
-def betPhase(p1, p2, p3, p4):
-    p1.betting()
-    p2.betting()
-    p3.betting()
-    p4.betting()
+def betPhase(players):
+    for p in players:
+        p.betting()
 
-def callPhase(c, p1, p2, p3, p4):
-    p1.callOrFold(c)
-    p2.callOrFold(c)
-    p3.callOrFold(c)
-    p4.callOrFold(c)
+def callPhase(c, players):
+    for p in players:
+        p.callOrFold(c)
 
-def doubtPhase(p1, p2, p3, p4):
-    p1.inputDoubt(p2, p3, p4)
-    p2.inputDoubt(p1, p3, p4)
-    p3.inputDoubt(p1, p2, p4)
-    p4.inputDoubt(p1, p2, p3)
+def doubtPhase(players):
+    for p in players:
+        others = players[:]
+        others.remove(p)
+        p.inputDoubt(others)
 
-def detectPhase(d, p1, p2, p3, p4):
-    d.detect(p1, linkId(p1.doubt, p1, p2, p3, p4))
-    d.detect(p2, linkId(p2.doubt, p1, p2, p3, p4))
-    d.detect(p3, linkId(p3.doubt, p1, p2, p3, p4))
-    d.detect(p4, linkId(p4.doubt, p1, p2, p3, p4))
+def detectPhase(d, players):
+    for p in players:
+        d.detect(p, linkId(p.doubt, players))
 
-def payPhase(c, d, p1, p2, p3, p4):
-    d.pay(c, p1)
-    d.pay(c, p2)
-    d.pay(c, p3)
-    d.pay(c, p4)
+def payPhase(c, d, players):
+    for p in players:
+        d.pay(c, p)
 
-def linkId(id, p1, p2, p3, p4):
+def linkId(id, players):
     """
     プレイヤーのIDを引数に対応したplayerを返す関数.
     """
     player = None
-    if id == 1:
-        player = p1
-    elif id == 2:
-        player = p2
-    elif id == 3:
-        player = p3
-    elif id == 4:
-        player = p4
-    else:
-        player = None
+    for p in players:
+        if id == p.playerNo:
+            player = p
+
     return player
 
-def pleaseEnter(num):
-    """
-    Please Enterを出力し,引数numの値だけ出力された行を消す関数.
-
-    引数 :
-        num : 消す行数の数.
-    """
-    print('Please Enter', end='')
-    hitEnter = input()
-    print('\u001b[%dA\u001b[0J' % num, end='')
-
-def checkFinish(p1, p2, p3, p4):
+def checkFinish(players):
     """
     各プレイヤーの所持金が0になったか確認する関数.
     """
-    players = [p1, p2, p3, p4]
     finish = False
     for p in players:
         if p.money <= 0:
@@ -206,11 +181,10 @@ def checkFinish(p1, p2, p3, p4):
             print(p.name +'さんの所持金が無くなりました.')
     return finish
 
-def finishGame(p1, p2, p3, p4):
+def finishGame(players):
     """
     最も所持金の多いプレイヤーを勝者とする関数.
     """
-    players = [p1, p2, p3, p4]
     winners = []
     maxim = 0
     for p in players:
@@ -225,6 +199,17 @@ def finishGame(p1, p2, p3, p4):
         print(winner.name +'さん', end='')
     print('の勝利です!')
 
+def pleaseEnter(num):
+        """
+        Please Enterを出力し,引数numの値だけ出力された行を消す関数.
+
+        引数 :
+        num : 消す行数の数.
+        """
+        print('Please Enter', end='')
+        hitEnter = input()
+        print('\u001b[%dA\u001b[0J' % num, end='')
+
 if __name__ == '__main__':
     import dealer, player, coin, sys
     c = coin.Coin()
@@ -233,6 +218,7 @@ if __name__ == '__main__':
     p2 = player.Player(2, '2さん')
     p3 = player.Player(3, '3さん')
     p4 = player.Player(4, '4さん')
-    play(d, p1, p2, p3, p4)
+    players = [p1, p2, p3, p4]
+    play(d, players)
     import doctest
     doctest.testmod()
