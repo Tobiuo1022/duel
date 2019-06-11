@@ -19,6 +19,9 @@ class Dealer:
 
     def announce_doubt(self, p1, p2, p3, p4):
         print('ダウトの結果を公表します.')
+        print('Please Enter', end='')
+        hitEnter = input()
+        print('\u001b[1A\u001b[0J', end='')
         player = [p1, p2, p3, p4]
 
         count = 0
@@ -31,6 +34,10 @@ class Dealer:
             doubted = main.linkId(doubter.doubt, p1, p2, p3, p4)
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
+
+        print('Please Enter', end='')
+        hitEnter = input()
+        print('\u001b[1A\u001b[0J', end='')
 
     def detect(self, doubter, doubted):
         """
@@ -48,8 +55,11 @@ class Dealer:
                 doubter.money += doubted.bet;
                 print(doubter.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
             else:
-                doubter.money -= doubted.bet/2
+                doubter.money -= int(doubted.bet/2)
                 print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
+            print('Please Enter', end='')
+            hitEnter = input()
+            print('\u001b[1A\u001b[0J', end='')
 
     def pay(self, coin, player):
         """

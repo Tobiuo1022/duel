@@ -1,4 +1,4 @@
-import coin
+import coin, main
 
 class Player:
     playerNo = 0 #プレイヤーの番号.
@@ -19,21 +19,21 @@ class Player:
         コイントスの結果を予想して所持金を賭ける関数.
         """
         print(str(self.name) +'さん')
+        main.pleaseEnter(1)
         print('どちらに賭けますか？(表, 裏)(現在の所持金'+ str(self.money) +'円)')
         self.predict = self.answer('表', '裏') #入力
         print('いくら賭けますか？')
         self.bet = self.inputBet() #入力
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
-        print('Please Enter', end='')
-        hitEnter = input()
-        print('\u001b[7A\u001b[0J', end='')
+        main.pleaseEnter(7)
 
     def callOrFold(self, coin):
         """
         コイントスの結果と予想を判定して、降りるか降りないかを決める関数.
         """
         print(str(self.name) +'さん')
+        main.pleaseEnter(1)
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.(降りる, 降りない)')
             ans = self.answer('降りる', '降りない')
@@ -46,7 +46,7 @@ class Player:
             if ans == 1:
                 self.bluff = 1
                 self.predict += self.bluff
-        print('\u001b[3A\u001b[0J', end='')
+        main.pleaseEnter(4)
 
     def answer(self, zero, first):
         """
@@ -68,7 +68,7 @@ class Player:
                 ans = 1
                 break
             else:
-                print('\u001b[2A\u001b[0J', end='') #コンソール操作
+                print('\u001b[2A\u001b[0J', end='')
                 print(zero + 'もしくは' + first + 'でお答えください.')
         return ans
 
@@ -98,6 +98,7 @@ class Player:
         任意のプレイヤーをダウトするための関数.
         """
         print(str(self.name) +'さん')
+        main.pleaseEnter(1)
         print('どのプレイヤーをダウトしますか？', end='')
         print('('+ str(p1.name) +', '+ str(p2.name) +', '+ str(p3.name) +', ダウトしない)')
         doubtName = ''
@@ -116,18 +117,16 @@ class Player:
                 doubt = 0
                 break
             else:
+                print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
                 print('('+ str(p1.name) +', '+ str(p2.name) +', '+ str(p3.name) +', ダウトしない)')
-                print('\u001b[2A\u001b[0J', end='')
                 continue
         self.doubt = doubt
         if self.doubt != 0:
             print(doubtName +'さんをダウトします.')
         else:
             print('ダウトしません.')
-        print('Please Enter', end='')
-        hitEnter = input()
-        print('\u001b[5A\u001b[0J', end='')
+        main.pleaseEnter(5)
 
     #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
     def test_betting(self, face, bet):

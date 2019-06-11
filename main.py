@@ -111,18 +111,24 @@ def play(d, p1, p2, p3, p4):
     print('ゲームを開始します.')
     while checkFinish(p1, p2, p3, p4) == False:
         d.announce_state(p1, p2, p3, p4) #各プレイヤーの所持金を公表.
+
         print('-- BetPhase --') #賭けフェイズ
         betPhase(p1, p2, p3, p4)
         d.announce_bet(p1, p2, p3, p4) #各プレイヤーの賭け金を公表.
-        print('-- CoinToss --')
+
+        print('-- CoinToss --') #コイントス
         c.toss()
         print(c.face +'が出ました.')
+        pleaseEnter(1)
+
         print('-- Call or Fold --') #コールフェイズ
         callPhase(c, p1, p2, p3, p4)
+
         print('-- DoubtPhase --') #ダウトフェイズ
         doubtPhase(p1, p2, p3, p4)
         d.announce_doubt(p1, p2, p3, p4)
         detectPhase(d, p1, p2, p3, p4)
+
         print('-- PayPhase --') #ペイフェイズ
         payPhase(c, d, p1, p2, p3, p4)
         if checkFinish(p1, p2, p3, p4) == True:
@@ -176,6 +182,17 @@ def linkId(id, p1, p2, p3, p4):
     else:
         player = None
     return player
+
+def pleaseEnter(num):
+    """
+    Please Enterを出力し,引数numの値だけ出力された行を消す関数.
+
+    引数 :
+        num : 消す行数の数.
+    """
+    print('Please Enter', end='')
+    hitEnter = input()
+    print('\u001b[%dA\u001b[0J' % num, end='')
 
 def checkFinish(p1, p2, p3, p4):
     """

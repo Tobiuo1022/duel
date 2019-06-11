@@ -20,7 +20,7 @@
 0
 '''
 
-import random
+import random, time
 
 class Coin:
     """
@@ -39,6 +39,9 @@ class Coin:
         """
         コイントスをする関数.
         """
+        print('コイントス中…')
+        time.sleep(2)
+        print('\u001b[1A\u001b[0J', end='')
         self.num = random.randint(0, 1) #0か1の値を取る.
         self.face = conversion(self.num)
 
