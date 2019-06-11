@@ -29,7 +29,8 @@ class Dealer:
         指定した相手にダウトを行い,所持金の増減を行う関数.
 
         引数 :
-            douted : 指定したプレイヤーが入る.
+            doubter : ダウトするプレイヤー.
+            douted : ダウトされるプレイヤー.
         """
         if doubted != None:
             doubted.predict -= doubted.bluff
@@ -41,6 +42,14 @@ class Dealer:
             else:
                 doubter.money -= doubted.bet/2
                 print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
+
+    def pay(self, coin, player):
+        if player.predict == coin.num:
+            player.money += player.bet*2;
+            print(player.name +'へ'+ str(player.bet*2) +'円をお支払いします.')
+        else:
+            print('残念ですが'+ player.name +'の賭金は没収となります.')
+        player.bet = 0
 
 if __name__ == '__main__':
     import doctest

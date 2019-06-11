@@ -65,7 +65,21 @@
 >>> print(p4.money)
 6000
 
->>>
+>>> payPhase(c, d, p1, p2, p3, p4)
+1さんへ2000円をお支払いします.
+残念ですが2さんの賭金は没収となります.
+3さんへ6000円をお支払いします.
+4さんへ8000円をお支払いします.
+
+>>> print(p1.money, p1.bet)
+13000 0
+>>> print(p2.money, p1.bet)
+6000 0
+>>> print(int(p3.money), p1.bet)
+11000 0
+>>> print(p4.money, p1.bet)
+14000 0
+
 >>>
 >>>
 >>>
@@ -91,6 +105,7 @@ def play(d, p1, p2, p3, p4):
     doubtPhase(p1, p2, p3, p4)
     d.announce_doubt(p1, p2, p3, p4)
     detectPhase(d, p1, p2, p3, p4)
+    payPhase(c, d, p1, p2, p3, p4)
 
 def betPhase(p1, p2, p3, p4):
     p1.betting()
@@ -115,6 +130,12 @@ def detectPhase(d, p1, p2, p3, p4):
     d.detect(p2, linkId(p2.doubt, p1, p2, p3, p4))
     d.detect(p3, linkId(p3.doubt, p1, p2, p3, p4))
     d.detect(p4, linkId(p4.doubt, p1, p2, p3, p4))
+
+def payPhase(c, d, p1, p2, p3, p4):
+    d.pay(c, p1)
+    d.pay(c, p2)
+    d.pay(c, p3)
+    d.pay(c, p4)
 
 def linkId(id, p1, p2, p3, p4):
     """
