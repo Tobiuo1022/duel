@@ -63,12 +63,18 @@ class Dealer:
             doubted.predict -= doubted.bluff
             print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
             if doubted.bluff == 1:
-                doubted.money -= doubted.bet;
-                doubter.money += doubted.bet;
-                print(doubter.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
+                steal = doubted.bet
+                if doubter.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
+                    steal *= 2
+                doubted.money -= steal;
+                doubter.money += steal;
+                print(doubter.name +'のダウトは成功です.'+ str(steal) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
             else:
-                doubter.money -= int(doubted.bet/2)
-                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
+                penalty = doubted.bet
+                if doubter.mode == 0:
+                    penalty = int(penalty/2) #ペナルティが半減する.
+                doubter.money -= penalty
+                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
             main.pleaseEnter(1)
 
     def pay(self, coin, player):
@@ -139,14 +145,20 @@ class Dealer:
     def test_detect(self, doubter, doubted):
         if doubted != None:
             doubted.predict -= doubted.bluff
-            print(doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
+            print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
             if doubted.bluff == 1:
-                doubted.money -= doubted.bet;
-                doubter.money += doubted.bet;
-                print(doubter.name +'のダウトは成功です.'+ str(doubted.bet) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
+                steal = doubted.bet
+                if doubter.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
+                    steal *= 2
+                doubted.money -= steal;
+                doubter.money += steal;
+                print(doubter.name +'のダウトは成功です.'+ str(steal) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
             else:
-                doubter.money -= int(doubted.bet/2)
-                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(int(doubted.bet/2)) +'円を没収します.')
+                penalty = doubted.bet
+                if doubter.mode == 0:
+                    penalty = int(penalty/2) #ペナルティが半減する.
+                doubter.money -= penalty
+                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
 
 if __name__ == '__main__':
     import doctest

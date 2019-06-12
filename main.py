@@ -21,6 +21,11 @@ False
 3さんさん : 所持金 10000
 4さんさん : 所持金 10000
 
+>>> p1.mode = 0
+>>> p2.mode = 0
+>>> p3.mode = 0
+>>> p4.mode = 2
+
 >>> p1.test_betting(0, 1000)
 >>> p2.test_betting(0, 2000)
 >>> p3.test_betting(1, 3000)
@@ -49,40 +54,42 @@ False
 
 >>> p1.test_callOrFold(0)
 >>> p2.test_callOrFold(0)
->>> p3.test_callOrFold(1)
->>> p4.test_callOrFold(0)
+>>> p3.test_callOrFold(0)
+>>> p4.test_callOrFold(1)
 
 >>> d.announce_call(c, players)
 1さんさん : Call
 2さんさん : Call
-3さんさん : Call
-4さんさん : Fold
+3さんさん : Fold
+4さんさん : Call
 
 >>> p1.doubt = 2
 >>> p2.doubt = 0
->>> p3.doubt = 0
->>> p4.doubt = 3
+>>> p3.doubt = 4
+>>> p4.doubt = 0
 
 >>> d.test_announce_doubt(players)
 ダウトの結果を公表します.
 1さん → 2さん
-4さん → 3さん
+3さん → 4さん
 
 >>> d.test_detect(p1, p2)
+<BLANKLINE>
 2さんが賭けた面は表でした.
 1さんのダウトは失敗です.ペナルティとして1000円を没収します.
->>> d.test_detect(p4, p3)
-3さんが賭けた面は裏でした.
-4さんのダウトは成功です.3000円が3さんから4さんへ移動します.
+>>> d.test_detect(p3, p4)
+<BLANKLINE>
+4さんが賭けた面は裏でした.
+3さんのダウトは成功です.8000円が4さんから3さんへ移動します.
 
 >>> print(p1.money)
 8000
 >>> print(p2.money)
 8000
 >>> print(p3.money)
-4000
+15000
 >>> print(p4.money)
-9000
+-2000
 
 >>> payPhase(c, d, players)
 1さんへ2000円をお支払いします.
@@ -95,9 +102,9 @@ False
 >>> print(p2.money, p1.bet)
 12000 0
 >>> print(int(p3.money), p1.bet)
-4000 0
+15000 0
 >>> print(p4.money, p1.bet)
-9000 0
+-2000 0
 
 >>> p1.money = 0
 >>> d.checkFinish(players)
@@ -109,11 +116,12 @@ True
 各プレイヤーの所持金です.
 1さんさん : 所持金 0
 2さんさん : 所持金 12000
-3さんさん : 所持金 4000
-4さんさん : 所持金 9000
+3さんさん : 所持金 15000
+4さんさん : 所持金 -2000
 <BLANKLINE>
-1さんさんの所持金が無くなりました.
-2さんさんの勝利です!
+1さんさん4さんさんの所持金が無くなりました.
+3さんさんの勝利です!
+
 
 >>>
 >>>
@@ -158,6 +166,7 @@ def play(d, players):
 
 def betPhase(players):
     for p in players:
+        p.selectMode()
         p.betting()
 
 def callPhase(c, players):

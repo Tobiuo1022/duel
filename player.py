@@ -4,6 +4,7 @@ class Player:
     playerNo = 0 #プレイヤーの番号.
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
+    mode = 0
     counter = 0 #カウンターの値
     bet = 0 #賭け金
     predict = 0 #予想した面.
@@ -14,12 +15,32 @@ class Player:
         self.playerNo = playerNo
         self.name = name
 
+    def selectMode(self):
+        print(str(self.name) +'さん')
+        main.pleaseEnter(1)
+        print('モードを選択してください.', end='')
+        print('(ダウト, カウンター, ダブルアップ)')
+        while True:
+            select = input()
+            if select == 'ダウト':
+                self.mode = 0
+                break
+            elif select == 'カウンター':
+                self.mode = 1
+                break
+            elif select == 'ダブルアップ':
+                self.mode = 2
+                break
+            else:
+                print('\u001b[2A\u001b[0J', end='')
+                print('もう一度入力してください.', end='')
+                print('(ダウト, カウンター, ダブルアップ)')
+                continue
+
     def betting(self):
         """
         コイントスの結果を予想して所持金を賭ける関数.
         """
-        print(str(self.name) +'さん')
-        main.pleaseEnter(1)
         print('どちらに賭けますか？(表, 裏)')
         self.predict = self.answer('表', '裏') #入力
         print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
