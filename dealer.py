@@ -25,7 +25,7 @@ class Dealer:
     def announce_bet(self, players):
         print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +'] [賭け金 '+ str(p.bet) +']')
+            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +'] [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
 
     def announce_call(self, coin, players):
         for p in players:
@@ -88,9 +88,27 @@ class Dealer:
             if player.mode == 2:
                 rate = 3
             player.money += player.bet*rate;
-            print(player.name +'へ'+ str(player.bet*rate) +'円をお支払いします.')
+            print(player.name +'へ'+ str(player.bet*rate
+            ) +'円をお支払いします.')
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
+
+    def checkDuel(self, players):
+        declarer = None
+        maximum = 0
+        for p in players:
+            if p.mode == 3:
+                if p.money > maximum: #所持金の高いプレイヤーが優先.
+                    maximum = p.money
+                    declarer = p
+        return declarer
+
+    def resetValue(self, players):
+        for p in players:
+            p.money += p.bet
+            p.mode = 0
+            p.bet = 0
+            p.predict = 0
 
     def checkFinish(self, players):
         """
@@ -113,15 +131,15 @@ class Dealer:
 
         winners = []
         losers = []
-        maxim = 0 #所持金の最大値
+        maximum = 0 #所持金の最大値
         for p in players:
             if p.money <= 0: #所持金が0になった時
                 losers.append(p)
-            elif p.money > maxim: #最大値更新時
+            elif p.money > maximum: #最大値更新時
                 winners.clear()
                 winners.append(p)
-                maxim = p.money
-            elif p.money == maxim: #同率時
+                maximum = p.money
+            elif p.money == maximum: #同率時
                 winners.append(p)
 
         for loser in losers:

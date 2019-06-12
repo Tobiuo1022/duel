@@ -44,10 +44,10 @@ False
 
 >>> d.announce_bet(players)
 各プレイヤーの賭けた内容を公表します.
-1さんさん : [モード ダウト] [賭け金 100]
-2さんさん : [モード カウンター] [賭け金 200]
-3さんさん : [モード ダウト] [賭け金 300]
-4さんさん : [モード ダブルアップ] [賭け金 400]
+1さんさん : [モード ダウト] [賭け金 100] [所持金 9900]
+2さんさん : [モード カウンター] [賭け金 200] [所持金 9800]
+3さんさん : [モード ダウト] [賭け金 300] [所持金 9700]
+4さんさん : [モード ダブルアップ] [賭け金 400] [所持金 9600]
 
 >>> c.num = 0
 >>> c.face = coin.conversion(c.num)
@@ -96,14 +96,14 @@ False
 
 >>> updateValue(players)
 
->>> print(p1.mode, p1.bet, p1.predict, p1.bluff, p1.call, p1.doubt)
-0 0 0 0 0 0
->>> print(p2.mode, p2.bet, p2.predict, p2.bluff, p2.call, p2.doubt)
-0 0 0 0 0 0
->>> print(p3.mode, p3.bet, p3.predict, p3.bluff, p3.call, p3.doubt)
-0 0 0 0 0 0
->>> print(p4.mode, p4.bet, p4.predict, p4.bluff, p4.call, p4.doubt)
-0 0 0 0 0 0
+>>> print(p1.mode, p1.bet, p1.predict, p1.bluff, p1.call, p1.doubt, p4.target)
+0 0 0 0 0 0 0
+>>> print(p2.mode, p2.bet, p2.predict, p2.bluff, p2.call, p2.doubt, p4.target)
+0 0 0 0 0 0 0
+>>> print(p3.mode, p3.bet, p3.predict, p3.bluff, p3.call, p3.doubt, p4.target)
+0 0 0 0 0 0 0
+>>> print(p4.mode, p4.bet, p4.predict, p4.bluff, p4.call, p4.doubt, p4.target)
+0 0 0 0 0 0 0
 
 >>> print(p1.money, p1.counter)
 9950 0
@@ -130,8 +130,38 @@ True
 1さんさんの所持金が無くなりました.
 4さんさんの勝利です!
 
->>>
->>>
+>>> p1.money = 10000
+>>> p2.money = 10000
+>>> p3.money = 10000
+>>> p4.money = 10000
+
+>>> p1.counter = 0
+>>> p2.counter = 0
+>>> p3.counter = 0
+>>> p4.counter = 0
+
+>>> p1.mode = 3
+>>> p2.mode = 1
+>>> p3.mode = 3
+>>> p4.mode = 2
+
+>>> p1.target = 4
+>>> p2.test_betting(0, 200)
+>>> p3.target = 4
+>>> p4.test_betting(1, 400)
+
+>>> declarer = d.checkDuel(players)
+>>> d.resetValue(players)
+>>> print(p2.predict, p2.bet, p2.money)
+0 0 10000
+>>> print(p4.predict, p4.bet, p4.money)
+0 0 10000
+>>> declarer.test_duel(c, players, False)
+>>> print(p1.predict, p1.money)
+0 5000
+>>> print(p4.money)
+15000
+
 >>>
 >>>
 >>>
@@ -142,18 +172,31 @@ def play(d, players):
     d.entry(players)
     print('\nゲームを開始します.')
     round = 0
+    goNextRound = True
     while d.checkFinish(players) == False:
-        round += 1
-        print('\n-- '+ str(round) +'Round --')
+        if goNextRound == True:
+            round += 1
+            print('\n-- '+ str(round) +'Round --')
+        else:
+            print('再度BetPhaseを行います.\n')
+            goNextRound = True
+
         d.announce_state(players) #各プレイヤーの所持金を公表.
 
         print('\n-- BetPhase --') #賭けフェイズ
         betPhase(players)
+
+        declarer = d.checkDuel(players) #宣言者を決定.
+        if declarer != None: #デュエルを宣言したプレイヤーがいればデュエルフェイズを行う.
+            print('\n-- DuelPhase --') #デュエルフェイズ
+            duelPhase(c, d, declarer, players)
+            goNextRound = False
+            continue
+
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
 
         print('\n-- CoinToss --') #コイントス
         c.toss()
-        print(c.face +'が出ました.')
         pleaseEnter(1)
 
         print('\n-- Call or Fold --') #コールフェイズ
@@ -176,7 +219,12 @@ def play(d, players):
 def betPhase(players):
     for p in players:
         p.selectMode()
-        p.betting()
+        if p.mode == 3: #デュエルモード
+            others = players[:]
+            others.remove(p)
+            p.inputTarget(others)
+        else:
+            p.betting()
 
 def callPhase(c, players):
     for p in players:
@@ -196,6 +244,10 @@ def payPhase(c, d, players):
     for p in players:
         d.pay(c, p)
 
+def duelPhase(c, d, declarer, players):
+    d.resetValue(players) #各プレイヤーのベッドを無かったことにする.
+    declarer.duel(c, players)
+
 def updateValue(players):
     """
     各プレイヤーの持っている値をリセットする.
@@ -209,8 +261,8 @@ def updateValue(players):
         p.mode = 0
         p.bet = 0
         p.predict = 0
-        p.bluff = 0
         p.call = 0
+        p.bluff = 0
         p.doubt = 0
 
 def linkId(id, players):

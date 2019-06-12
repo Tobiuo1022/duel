@@ -4,13 +4,14 @@ class Player:
     playerNo = 0 #プレイヤーの番号.
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
-    mode = 0
     counter = 0 #カウンターの値
+    mode = 0
     bet = 0 #賭け金
     predict = 0 #予想した面.
-    bluff = 0 #通常は0,嘘をつくと1が入る.
     call = 0 #foldするなら0,コールするなら1が入る.
+    bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = 0 #ダウト先のプレイヤー.
+    target = 0 #デュエルを宣言するプレイヤー.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
@@ -20,7 +21,7 @@ class Player:
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
         print('モードを選択してください.', end='')
-        print('(ダウト, カウンター, ダブルアップ)')
+        print('(ダウト, カウンター, ダブルアップ, デュエル)')
         while True:
             select = input()
             if select == 'ダウト':
@@ -32,10 +33,13 @@ class Player:
             elif select == 'ダブルアップ':
                 self.mode = 2
                 break
+            elif select == 'デュエル':
+                self.mode = 3
+                break
             else:
                 print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
-                print('(ダウト, カウンター, ダブルアップ)')
+                print('(ダウト, カウンター, ダブルアップ, デュエル)')
                 continue
 
     def betting(self):
@@ -49,6 +53,29 @@ class Player:
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
         main.pleaseEnter(9)
+
+    def inputTarget(self, players):
+        print('どのプレイヤーにデュエルを宣言しますか？', end='')
+        print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name)+ ')')
+        targetName = ''
+        while True:
+            targetName = input()
+            if targetName == players[0].name:
+                self.target = players[0].playerNo
+                break
+            elif targetName == players[1].name:
+                self.target = players[1].playerNo
+                break
+            elif targetName == players[2].name:
+                self.target = players[2].playerNo
+                break
+            else:
+                print('\u001b[2A\u001b[0J', end='')
+                print('もう一度入力してください.', end='')
+                print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name)+ ')')
+                continue
+        print(targetName +'さんにデュエルを宣言します.')
+        main.pleaseEnter(7)
 
     def callOrFold(self, coin):
         """
@@ -77,6 +104,27 @@ class Player:
                 self.predict += self.bluff
                 self.call = 1
         main.pleaseEnter(4)
+
+    def duel(self, coin, players):
+        target = main.linkId(self.target, players)
+        print(self.name +'さんが'+ target.name +'さんへデュエルを宣言しました.')
+        print('各プレイヤーのBetPhaseの内容を破棄し,DuelPhaseへ移行します.')
+        print(self.name +'さん,どちらに賭けますか？(表, 裏)')
+        self.predict = self.answer('表', '裏') #入力
+        coin.toss()
+        main.pleaseEnter(1)
+        print('')
+        if self.predict == coin.num:
+            steal = int(self.money/10)
+            self.money += steal
+            target.money -= steal
+            print('予想が的中しました.'+ str(steal) +'円が'+ self.name +'から'+ target.name +'へ移動します.')
+        else:
+            steal = int(self.money/2)
+            self.money -= steal
+            target.money += steal
+            print('予想が外れました.'+ str(steal) +'円が'+ target.name +'から'+ self.name +'へ移動します.')
+        self.predict = 0
 
     def answer(self, zero, first):
         """
@@ -135,23 +183,22 @@ class Player:
         while True:
             doubtName = input()
             if doubtName == players[0].name:
-                doubt = players[0].playerNo
+                self.doubt = players[0].playerNo
                 break
             elif doubtName == players[1].name:
-                doubt = players[1].playerNo
+                self.doubt = players[1].playerNo
                 break
             elif doubtName == players[2].name:
-                doubt = players[2].playerNo
+                self.doubt = players[2].playerNo
                 break
             elif doubtName == 'ダウトしない':
-                doubt = 0
+                self.doubt = 0
                 break
             else:
                 print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
                 print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
                 continue
-        self.doubt = doubt
         if self.doubt != 0:
             print(doubtName +'さんをダウトします.')
         else:
@@ -190,6 +237,21 @@ class Player:
                 self.bluff = 1
                 self.predict += self.bluff
                 self.call = 1
+
+    def test_duel(self, coin, players, correct):
+        """
+        引数 :
+            correct : コインの表裏の予想の結果.的中ならTrue,外れならFalseが入る.
+        """
+        target = main.linkId(self.target, players)
+        if correct:
+            steal = int(self.money/10)
+            self.money += steal
+            target.money -= steal
+        else:
+            steal = int(self.money/2)
+            self.money -= steal
+            target.money += steal
 
 def linkMode(mode):
     """

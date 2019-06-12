@@ -44,6 +44,7 @@ class Coin:
         print('\u001b[1A\u001b[0J', end='')
         self.num = random.randint(0, 1) #0か1の値を取る.
         self.face = conversion(self.num)
+        print(self.face +'が出ました.')
 
 def conversion(num):
     """
