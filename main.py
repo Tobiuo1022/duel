@@ -8,9 +8,6 @@
 >>> p4 = player.Player(4, '4さん')
 >>> players = [p1, p2, p3, p4]
 
->>> print('ゲームを開始します.')
-ゲームを開始します.
-
 >>> d.checkFinish(players)
 False
 
@@ -67,24 +64,24 @@ False
 
 >>> p1.doubt = 2
 >>> p2.doubt = 0
->>> p3.doubt = 0
+>>> p3.doubt = 2
 >>> p4.doubt = 0
 
 >>> d.test_announce_doubt(players)
 ダウトの結果を公表します.
-1さん → 2さん
+3さん → 2さん
 
->>> d.test_detect(p1, p2)
+>>> d.test_detect(p3, p2)
 <BLANKLINE>
 2さんが賭けた面は表でした.
-1さんのダウトは失敗です.ペナルティとして150円を没収します.
+3さんのダウトは失敗です.ペナルティとして150円を没収します.
 
 >>> print(p1.money)
-9750
+9900
 >>> print(p2.money)
 9800
 >>> print(p3.money)
-9700
+9550
 >>> print(p4.money)
 9600
 
@@ -106,11 +103,11 @@ False
 0 0 0 0 0 0 0
 
 >>> print(p1.money, p1.counter)
-9950 0
+10100 0
 >>> print(p2.money, p2.counter)
 10200 25
 >>> print(int(p3.money), p3.counter)
-9700 150
+9550 150
 >>> print(p4.money, p4.counter)
 10800 0
 
@@ -124,7 +121,7 @@ True
 各プレイヤーの所持金とカウンターの値です.
 1さんさん : [所持金 0] [カウンター 0]
 2さんさん : [所持金 10200] [カウンター 25]
-3さんさん : [所持金 9700] [カウンター 150]
+3さんさん : [所持金 9550] [カウンター 150]
 4さんさん : [所持金 10800] [カウンター 0]
 <BLANKLINE>
 1さんさんの所持金が無くなりました.

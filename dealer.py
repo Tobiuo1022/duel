@@ -44,6 +44,19 @@ class Dealer:
         if count == 0: #count == 0 → 誰もダウトをしていない.
             print('ダウトしたプレイヤーはいませんでした.')
 
+        for p in players:
+            lowest = None
+            minimum = float('inf') #無限
+            for doubter in players:
+                doubted = main.linkId(doubter.doubt, players)
+                if doubted == p: #もし自分を疑っている場合
+                    if doubter.money < minimum: #所持金の低いプレイヤーが優先.
+                        minimum = doubter.money
+                        lowest = doubter
+                    doubter.doubt = 0 #所持金の低くないプレイヤーはダウトできなくなる.
+            if lowest != None:
+                lowest.doubt = p.playerNo
+
         for doubter in players:
             doubted = main.linkId(doubter.doubt, players)
             if doubted != None:
@@ -158,6 +171,19 @@ class Dealer:
             count += doubter.doubt
         if count == 0: #count == 0 → 誰もダウトをしていない.
             print('ダウトしたプレイヤーはいませんでした.')
+
+        for p in players:
+            lowest = None
+            minimum = float('inf') #無限
+            for doubter in players:
+                doubted = main.linkId(doubter.doubt, players)
+                if doubted == p: #もし自分を疑っている場合
+                    if doubter.money < minimum: #所持金の低いプレイヤーが優先.
+                        minimum = doubter.money
+                        lowest = doubter
+                    doubter.doubt = 0 #所持金の低くないプレイヤーはダウトできなくなる.
+            if lowest != None:
+                lowest.doubt = p.playerNo
 
         for doubter in players:
             doubted = main.linkId(doubter.doubt, players)
