@@ -11,7 +11,7 @@
 >>> print('ゲームを開始します.')
 ゲームを開始します.
 
->>> checkFinish(players)
+>>> d.checkFinish(players)
 False
 
 >>> d.announce_state(players)
@@ -100,11 +100,19 @@ False
 9000 0
 
 >>> p1.money = 0
->>> checkFinish(players)
-1さんさんの所持金が無くなりました.
+>>> d.checkFinish(players)
 True
 
->>> finishGame(players)
+>>> d.finishGame(players)
+<BLANKLINE>
+-- FinishGame --
+各プレイヤーの所持金です.
+1さんさん : 所持金 0
+2さんさん : 所持金 12000
+3さんさん : 所持金 4000
+4さんさん : 所持金 9000
+<BLANKLINE>
+1さんさんの所持金が無くなりました.
 2さんさんの勝利です!
 
 >>>
@@ -116,36 +124,37 @@ True
 """
 
 def play(d, players):
-    print('ゲームを開始します.')
-    while checkFinish(players) == False:
+    d.entry(players)
+    print('\nゲームを開始します.')
+    round = 0
+    while d.checkFinish(players) == False:
+        round += 1
+        print('\n-- '+ str(round) +'Round --')
         d.announce_state(players) #各プレイヤーの所持金を公表.
 
-        print('-- BetPhase --') #賭けフェイズ
+        print('\n-- BetPhase --') #賭けフェイズ
         betPhase(players)
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
 
-        print('-- CoinToss --') #コイントス
+        print('\n-- CoinToss --') #コイントス
         c.toss()
         print(c.face +'が出ました.')
         pleaseEnter(1)
 
-        print('-- Call or Fold --') #コールフェイズ
+        print('\n-- Call or Fold --') #コールフェイズ
         callPhase(c, players)
         d.announce_call(c, players)
 
-        print('-- DoubtPhase --') #ダウトフェイズ
+        print('\n-- DoubtPhase --') #ダウトフェイズ
         doubtPhase(players)
         d.announce_doubt(players)
         detectPhase(d, players)
 
-        print('-- PayPhase --') #ペイフェイズ
+        print('\n-- PayPhase --') #ペイフェイズ
         payPhase(c, d, players)
         pleaseEnter(1)
 
-        if checkFinish(players) == True:
-            break
-        print('-- NextTurn --')
-    finishGame(players)
+    d.finishGame(players)
 
 def betPhase(players):
     for p in players:
@@ -180,35 +189,6 @@ def linkId(id, players):
 
     return player
 
-def checkFinish(players):
-    """
-    各プレイヤーの所持金が0になったか確認する関数.
-    """
-    finish = False
-    for p in players:
-        if p.money <= 0:
-            finish = True
-            print(p.name +'さんの所持金が無くなりました.')
-    return finish
-
-def finishGame(players):
-    """
-    最も所持金の多いプレイヤーを勝者とする関数.
-    """
-    winners = []
-    maxim = 0
-    for p in players:
-        if p.money > maxim:
-            winners.clear()
-            winners.append(p)
-            maxim = p.money
-        elif p.money == maxim:
-            winners.append(p)
-
-    for winner in winners:
-        print(winner.name +'さん', end='')
-    print('の勝利です!')
-
 def pleaseEnter(num):
         """
         Please Enterを出力し,引数numの値だけ出力された行を消す関数.
@@ -224,11 +204,7 @@ if __name__ == '__main__':
     import dealer, player, coin, sys
     c = coin.Coin()
     d = dealer.Dealer()
-    p1 = player.Player(1, '1さん')
-    p2 = player.Player(2, '2さん')
-    p3 = player.Player(3, '3さん')
-    p4 = player.Player(4, '4さん')
-    players = [p1, p2, p3, p4]
+    players = []
     play(d, players)
     import doctest
     doctest.testmod()
