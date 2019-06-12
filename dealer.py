@@ -84,8 +84,11 @@ class Dealer:
         お金を清算する関数
         """
         if player.predict%2 == coin.num:
-            player.money += player.bet*2;
-            print(player.name +'へ'+ str(player.bet*2) +'円をお支払いします.')
+            rate = 2
+            if player.mode == 2:
+                rate = 3
+            player.money += player.bet*rate;
+            print(player.name +'へ'+ str(player.bet*rate) +'円をお支払いします.')
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
 

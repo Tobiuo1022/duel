@@ -24,30 +24,30 @@ False
 >>> p1.mode = 0
 >>> p2.mode = 1
 >>> p3.mode = 0
->>> p4.mode = 1
+>>> p4.mode = 2
 
->>> p2.counter = 500
+>>> p2.counter = 50
 
->>> p1.test_betting(0, 1000)
->>> p2.test_betting(0, 2000)
->>> p3.test_betting(1, 3000)
->>> p4.test_betting(1, 4000)
+>>> p1.test_betting(0, 100)
+>>> p2.test_betting(0, 200)
+>>> p3.test_betting(1, 300)
+>>> p4.test_betting(1, 400)
 
 >>> print(p1.predict, p1.bet, p1.money)
-0 1000 9000
+0 100 9900
 >>> print(p2.predict, p2.bet, p2.money)
-0 2000 8000
+0 200 9800
 >>> print(p3.predict, p3.bet, p3.money)
-1 3000 7000
+1 300 9700
 >>> print(p4.predict, p4.bet, p4.money)
-1 4000 6000
+1 400 9600
 
 >>> d.announce_bet(players)
 各プレイヤーの賭けた内容を公表します.
-1さんさん : [モード ダウト] [賭け金 1000]
-2さんさん : [モード カウンター] [賭け金 2000]
-3さんさん : [モード ダウト] [賭け金 3000]
-4さんさん : [モード カウンター] [賭け金 4000]
+1さんさん : [モード ダウト] [賭け金 100]
+2さんさん : [モード カウンター] [賭け金 200]
+3さんさん : [モード ダウト] [賭け金 300]
+4さんさん : [モード ダブルアップ] [賭け金 400]
 
 >>> c.num = 0
 >>> c.face = coin.conversion(c.num)
@@ -57,13 +57,13 @@ False
 >>> p1.test_callOrFold(c, 1)
 >>> p2.test_callOrFold(c, 1)
 >>> p3.test_callOrFold(c, 0)
->>> p4.test_callOrFold(c, 0)
+>>> p4.test_callOrFold(c, 1)
 
 >>> d.announce_call(c, players)
 1さんさん : Call
 2さんさん : Call
 3さんさん : Fold
-4さんさん : Fold
+4さんさん : Call
 
 >>> p1.doubt = 2
 >>> p2.doubt = 0
@@ -77,22 +77,22 @@ False
 >>> d.test_detect(p1, p2)
 <BLANKLINE>
 2さんが賭けた面は表でした.
-1さんのダウトは失敗です.ペナルティとして1500円を没収します.
+1さんのダウトは失敗です.ペナルティとして150円を没収します.
 
 >>> print(p1.money)
-7500
+9750
 >>> print(p2.money)
-8000
+9800
 >>> print(p3.money)
-7000
+9700
 >>> print(p4.money)
-6000
+9600
 
 >>> payPhase(c, d, players)
-1さんへ2000円をお支払いします.
-2さんへ4000円をお支払いします.
+1さんへ200円をお支払いします.
+2さんへ400円をお支払いします.
 残念ですが3さんの賭金は没収となります.
-残念ですが4さんの賭金は没収となります.
+4さんへ1200円をお支払いします.
 
 >>> updateValue(players)
 
@@ -106,13 +106,13 @@ False
 0 0 0 0 0 0
 
 >>> print(p1.money, p1.counter)
-9500 0
+9950 0
 >>> print(p2.money, p2.counter)
-12000 250
+10200 25
 >>> print(int(p3.money), p3.counter)
-7000 1500
+9700 150
 >>> print(p4.money, p4.counter)
-6000 2000
+10800 0
 
 >>> p1.money = 0
 >>> d.checkFinish(players)
@@ -123,12 +123,12 @@ True
 -- FinishGame --
 各プレイヤーの所持金とカウンターの値です.
 1さんさん : [所持金 0] [カウンター 0]
-2さんさん : [所持金 12000] [カウンター 250]
-3さんさん : [所持金 7000] [カウンター 1500]
-4さんさん : [所持金 6000] [カウンター 2000]
+2さんさん : [所持金 10200] [カウンター 25]
+3さんさん : [所持金 9700] [カウンター 150]
+4さんさん : [所持金 10800] [カウンター 0]
 <BLANKLINE>
 1さんさんの所持金が無くなりました.
-2さんさんの勝利です!
+4さんさんの勝利です!
 
 >>>
 >>>
