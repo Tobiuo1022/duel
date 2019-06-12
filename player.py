@@ -9,6 +9,7 @@ class Player:
     bet = 0 #賭け金
     predict = 0 #予想した面.
     bluff = 0 #通常は0,嘘をつくと1が入る.
+    call = 0 #foldするなら0,コールするなら1が入る.
     doubt = 0 #ダウト先のプレイヤー.
 
     def __init__(self, playerNo, name):
@@ -47,7 +48,7 @@ class Player:
         self.bet = self.inputBet() #入力
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
-        main.pleaseEnter(7)
+        main.pleaseEnter(9)
 
     def callOrFold(self, coin):
         """
@@ -58,15 +59,23 @@ class Player:
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.(降りる, 降りない)')
             ans = self.answer('降りる', '降りない')
-            if ans == 0:
+            if ans == 0: #的中しているが降りる.
                 self.bluff = 1
                 self.predict += self.bluff
+                self.call = 0
+            else: #的中し,コールする.
+                self.bluff = 0
+                self.call = 1
         else:
             print('予想が外れました.(降りる, 降りない)')
             ans = self.answer('降りる', '降りない')
-            if ans == 1:
+            if ans == 0: #外し,降りる.
+                self.bluff = 0
+                self.call = 0
+            else: #外したがコールする.
                 self.bluff = 1
                 self.predict += self.bluff
+                self.call = 1
         main.pleaseEnter(4)
 
     def answer(self, zero, first):
@@ -160,13 +169,40 @@ class Player:
         self.bet = bet
         self.money -= self.bet
 
-    def test_callOrFold(self, bluff):
+    def test_callOrFold(self, coin, answer):
         """
         引数 :
-            bluff : 嘘をつかないなら0,嘘をつくなら1が入る.
+            answer : 降りるなら0,降りないなら1が入る.
         """
-        self.bluff = bluff
-        self.predict += self.bluff
+        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
+            if answer == 0: #的中しているが降りる.
+                self.bluff = 1
+                self.predict += self.bluff
+                self.call = 0
+            else: #的中し,コールする.
+                self.bluff = 0
+                self.call = 1
+        else:
+            if answer == 0: #外し,降りる.
+                self.bluff = 0
+                self.call = 0
+            else: #外したがコールする.
+                self.bluff = 1
+                self.predict += self.bluff
+                self.call = 1
+
+def linkMode(mode):
+    """
+    modeの数字をカタカナで返す.変換器.
+    """
+    modeName = None
+    if mode == 0:
+        modeName = 'ダウト'
+    elif mode == 1:
+        modeName = 'カウンター'
+    elif mode == 2:
+        modeName = 'ダブルアップ'
+    return modeName
 
 if __name__ == '__main__':
     import doctest

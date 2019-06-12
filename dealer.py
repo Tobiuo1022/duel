@@ -18,18 +18,18 @@ class Dealer:
             players.append(p)
 
     def announce_state(self, players):
-        print('各プレイヤーの所持金です.')
+        print('各プレイヤーの所持金とカウンターの値です.')
         for p in players:
-            print(str(p.name) +'さん : 所持金 '+ str(p.money))
+            print(str(p.name) +'さん : [所持金 '+ str(p.money) +'] [カウンター '+str(p.counter) +']')
 
     def announce_bet(self, players):
-        print('各プレイヤーの賭け金を公表します.')
+        print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : '+ str(p.bet) +' (所持金 '+ str(p.money) +')')
+            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +'] [賭け金 '+ str(p.bet) +']')
 
     def announce_call(self, coin, players):
         for p in players:
-            if p.predict%2 == coin.num:
+            if p.call == 1:
                 print(p.name +'さん : Call')
             else:
                 print(p.name +'さん : Fold')
@@ -73,6 +73,8 @@ class Dealer:
                 penalty = doubted.bet
                 if doubter.mode == 0:
                     penalty = int(penalty/2) #ペナルティが半減する.
+                if doubted.mode == 1:
+                    penalty += doubted.counter
                 doubter.money -= penalty
                 print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
             main.pleaseEnter(1)
@@ -86,7 +88,6 @@ class Dealer:
             print(player.name +'へ'+ str(player.bet*2) +'円をお支払いします.')
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
-        player.bet = 0
 
     def checkFinish(self, players):
         """
@@ -157,6 +158,8 @@ class Dealer:
                 penalty = doubted.bet
                 if doubter.mode == 0:
                     penalty = int(penalty/2) #ペナルティが半減する.
+                if doubted.mode == 1:
+                    penalty += doubted.counter
                 doubter.money -= penalty
                 print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
 
