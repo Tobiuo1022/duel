@@ -20,12 +20,12 @@ class Dealer:
     def announce_state(self, players):
         print('各プレイヤーの所持金とカウンターの値です.')
         for p in players:
-            print(str(p.name) +'さん : [所持金 '+ str(p.money) +'] [カウンター '+str(p.counter) +']')
+            print(str(p.name) +'さん : [所持金 '+ str(p.money) +'] [カウンター '+ str(p.counter) +']')
 
     def announce_bet(self, players):
         print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +'] [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
+            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
 
     def announce_call(self, coin, players):
         for p in players:
@@ -33,6 +33,11 @@ class Dealer:
                 print(p.name +'さん : Call')
             else:
                 print(p.name +'さん : Fold')
+
+    def announce_mode(self, players):
+        print('各プレイヤーのモードを公表します.')
+        for p in players:
+            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +']')
 
     def announce_doubt(self, players):
         print('ダウトの結果を公表します.')
@@ -75,21 +80,27 @@ class Dealer:
         if doubted != None:
             doubted.predict -= doubted.bluff
             print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
+            bonus = doubted.bet
+            penalty = doubted.bet
             if doubted.bluff == 1:
-                steal = doubted.bet
                 if doubter.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
-                    steal *= 2
-                doubted.money -= steal;
-                doubter.money += steal;
-                print(doubter.name +'のダウトは成功です.'+ str(steal) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
+                    bonus *= 2
+                    penalty *= 2
+                if doubted.mode == 0: #ペナルティが半減.
+                    doubted.money -= int(penalty/2);
+                doubter.money += bonus
+                doubted.money -= penalty;
+                print(doubter.name +'のダウトは成功です.')
+                print('ボーナスとして'+ doubter.name +'さんへ'+ str(bonus) +'円をお支払いします.')
+                print('ブラフ失敗のペナルティとして'+ doubted.name +'から'+ str(penalty) +'円を没収します.')
             else:
-                penalty = doubted.bet
                 if doubter.mode == 0:
                     penalty = int(penalty/2) #ペナルティが半減する.
-                if doubted.mode == 1:
-                    penalty += doubted.counter
                 doubter.money -= penalty
-                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
+                print(doubter.name +'のダウトは失敗です.')
+                print('ペナルティとして'+ str(penalty) +'円を没収します.')
+                if doubted.mode == 1:
+                    douted.couterAttack(doubter)
             main.pleaseEnter(1)
 
     def pay(self, coin, player):
@@ -101,8 +112,7 @@ class Dealer:
             if player.mode == 2:
                 rate = 3
             player.money += player.bet*rate;
-            print(player.name +'へ'+ str(player.bet*rate
-            ) +'円をお支払いします.')
+            print(player.name +'へ'+ str(player.bet*rate) +'円をお支払いします.')
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
 

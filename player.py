@@ -21,16 +21,16 @@ class Player:
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
         print('モードを選択してください.', end='')
-        print('(ダウト, カウンター, ダブルアップ, デュエル)')
+        print('(ブラフ, カウンター, トリプルアップ, デュエル)')
         while True:
             select = input()
-            if select == 'ダウト':
+            if select == 'ブラフ':
                 self.mode = 0
                 break
             elif select == 'カウンター':
                 self.mode = 1
                 break
-            elif select == 'ダブルアップ':
+            elif select == 'トリプルアップ':
                 self.mode = 2
                 break
             elif select == 'デュエル':
@@ -39,7 +39,7 @@ class Player:
             else:
                 print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
-                print('(ダウト, カウンター, ダブルアップ, デュエル)')
+                print('(ブラフ, カウンター, トリプルアップ, デュエル)')
                 continue
 
     def betting(self):
@@ -105,6 +105,11 @@ class Player:
                 self.call = 1
         main.pleaseEnter(4)
 
+    def counterAttack(self, douter):
+        doubter.money -= self.counter
+        self.money += self.couter
+        print('さらに'+ str(self.couter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
+
     def duel(self, coin, players):
         target = main.linkId(self.target, players)
         print(self.name +'さんが'+ target.name +'さんへデュエルを宣言しました.')
@@ -118,12 +123,12 @@ class Player:
             steal = int(self.money/10)
             self.money += steal
             target.money -= steal
-            print('予想が的中しました.'+ str(steal) +'円が'+ self.name +'から'+ target.name +'へ移動します.')
+            print('予想が的中しました.'+ str(steal) +'円が'+ target.name +'から'+ self.name +'へ移動します.')
         else:
             steal = int(self.money/2)
             self.money -= steal
             target.money += steal
-            print('予想が外れました.'+ str(steal) +'円が'+ target.name +'から'+ self.name +'へ移動します.')
+            print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ target.name +'へ移動します.')
         self.predict = 0
 
     def answer(self, zero, first):
@@ -259,11 +264,11 @@ def linkMode(mode):
     """
     modeName = None
     if mode == 0:
-        modeName = 'ダウト'
+        modeName = 'ブラフ'
     elif mode == 1:
         modeName = 'カウンター'
     elif mode == 2:
-        modeName = 'ダブルアップ'
+        modeName = 'トリプルアップ'
     return modeName
 
 if __name__ == '__main__':

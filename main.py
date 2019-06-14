@@ -41,10 +41,10 @@ False
 
 >>> d.announce_bet(players)
 各プレイヤーの賭けた内容を公表します.
-1さんさん : [モード ダウト] [賭け金 100] [所持金 9900]
-2さんさん : [モード カウンター] [賭け金 200] [所持金 9800]
-3さんさん : [モード ダウト] [賭け金 300] [所持金 9700]
-4さんさん : [モード ダブルアップ] [賭け金 400] [所持金 9600]
+1さんさん : [賭け金 100] [所持金 9900]
+2さんさん : [賭け金 200] [所持金 9800]
+3さんさん : [賭け金 300] [所持金 9700]
+4さんさん : [賭け金 400] [所持金 9600]
 
 >>> c.num = 0
 >>> c.face = coin.conversion(c.num)
@@ -191,6 +191,7 @@ def play(d, players):
             continue
 
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
+        pleaseEnter(1)
 
         print('\n-- CoinToss --') #コイントス
         c.toss()
@@ -202,6 +203,8 @@ def play(d, players):
 
         print('\n-- DoubtPhase --') #ダウトフェイズ
         doubtPhase(players)
+        d.annouce_mode(players)
+        pleaseEnter(1)
         d.announce_doubt(players)
         detectPhase(d, players)
 
@@ -251,10 +254,10 @@ def updateValue(players):
     カウンターは更新する.
     """
     for p in players:
-        if p.mode == 1:
-            p.counter = int(p.counter/2)
         if p.call == 0:
             p.counter = int(p.bet/2)
+        else:
+            p.counter = int(p.counter/2)
         p.mode = 0
         p.bet = 0
         p.predict = 0
