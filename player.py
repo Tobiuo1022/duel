@@ -48,8 +48,10 @@ class Player:
         """
         print('どちらに賭けますか？(表, 裏)')
         self.predict = self.answer('表', '裏') #入力
+
         print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
         self.bet = self.inputBet() #入力
+
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
         main.pleaseEnter(9)
@@ -221,13 +223,13 @@ class Player:
         self.bet = bet
         self.money -= self.bet
 
-    def test_callOrFold(self, coin, answer):
+    def test_callOrFold(self, coin, ans):
         """
         引数 :
-            answer : 降りるなら0,降りないなら1が入る.
+            ans : 降りるなら0,降りないなら1が入る.
         """
         if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
-            if answer == 0: #的中しているが降りる.
+            if ans == 0: #的中しているが降りる.
                 self.bluff = 1
                 self.predict += self.bluff
                 self.call = 0
@@ -235,7 +237,7 @@ class Player:
                 self.bluff = 0
                 self.call = 1
         else:
-            if answer == 0: #外し,降りる.
+            if ans == 0: #外し,降りる.
                 self.bluff = 0
                 self.call = 0
             else: #外したがコールする.
