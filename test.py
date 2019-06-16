@@ -6,7 +6,11 @@ class testOfPlayer(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_a(self):
+    def test_noneDoubt(self):
+        """
+        各モードにおいてコールとフォールドが正常に行われるかテストする関数.
+        ダウトは無し.
+        """
         #プレイヤーのエントリー.
         c = coin.Coin()
         d = dealer.Dealer()
@@ -66,23 +70,36 @@ class testOfPlayer(unittest.TestCase):
         c.num = 0
 
         #コールの代入.
-        p1.assign_call(c, p1.predict, 1)
-        p2.assign_call(c, p2.predict, 0)
-        p3.assign_call(c, p3.predict, 1)
-        p4.assign_call(c, p4.predict, 0)
+        p1.assign_call(c.num, 0) #的中し,コールする.
+        p2.assign_call(c.num, 1) #的中しているが降りる.
+        p3.assign_call(c.num, 0) #外したがコールする.
+        p4.assign_call(c.num, 1) #外し,降りる.
 
-        self.assertEqual(p1.call, 1)
+        self.assertEqual(p1.isCall, True)
         self.assertEqual(p1.bluff, 0)
         self.assertEqual(p1.predict, 0)
-        self.assertEqual(p2.call, 0)
+
+        self.assertEqual(p2.isCall, False)
         self.assertEqual(p2.bluff, 1)
         self.assertEqual(p2.predict, 1)
-        self.assertEqual(p3.call, 1)
+
+        self.assertEqual(p3.isCall, True)
         self.assertEqual(p3.bluff, 1)
         self.assertEqual(p3.predict, 0)
-        self.assertEqual(p4.call, 0)
+
+        self.assertEqual(p4.isCall, False)
         self.assertEqual(p4.bluff, 0)
         self.assertEqual(p4.predict, 1)
+
+        d.pay(c, p1)
+        d.pay(c, p2)
+        d.pay(c, p3)
+        d.pay(c, p4)
+
+        self.assertEqual(p1.money, 10100)
+        self.assertEqual(p2.money, 9800)
+        self.assertEqual(p3.money, 10300)
+        self.assertEqual(p4.money, 9600)
 
 def test_betting(player, predict, bet):
     """

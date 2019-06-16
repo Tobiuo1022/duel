@@ -6,9 +6,9 @@ class Player:
     money = 10000 #所持金.
     counter = 0 #カウンターの値
     mode = None #選択したモード
-    bet = 0 #賭け金
     predict = 0 #予想した面.
-    call = 0 #foldするなら0,コールするなら1が入る.
+    bet = 0 #賭け金
+    isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = 0 #ダウト先のプレイヤー.
     target = 0 #デュエルを宣言するプレイヤー.
@@ -170,6 +170,8 @@ class Player:
     def callOrFold(self, coin):
         """
         コイントスの結果と予想を判定して、降りるか降りないかを決める関数.
+        降りる降りないの順番が逆になっているので注意.
+        後々消す予定.
         """
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
@@ -179,21 +181,66 @@ class Player:
             if ans == 0: #的中しているが降りる.
                 self.bluff = 1
                 self.predict += self.bluff
-                self.call = 0
+                self.isCall = False
             else: #的中し,コールする.
                 self.bluff = 0
-                self.call = 1
+                self.isCall = True
         else:
             print('予想が外れました.(降りる, 降りない)')
             ans = self.answer('降りる', '降りない')
             if ans == 0: #外し,降りる.
                 self.bluff = 0
-                self.call = 0
+                self.isCall = False
             else: #外したがコールする.
                 self.bluff = 1
                 self.predict += self.bluff
-                self.call = 1
+                self.isCall = True
         main.pleaseEnter(4)
+
+    def input_call(self, c_num):
+        """
+        コイントスの結果と予想を判定して、コールかフォールドを標準入力する関数.
+
+        引数 :
+            c_num : コインの表裏を示す.0は表,1は裏に対応している.
+
+        返り値 :
+            call : コールなら0,フォールドなら1が入る.
+        """
+        if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
+            print('予想が的中しました.(Call, Fold)')
+        else:
+            print('予想が外れました.(Call, Fold)')
+        call = self.answer('Call', 'Fold')
+        return call
+
+    def assign_call(self, c_num, call):
+        """
+        コイントスの結果と予想を判定して、コールかフォールドを標準入力する関数.
+
+        引数 :
+            c_num : コインの表裏を示す.0は表,1は裏に対応している.
+        """
+        if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
+            if call == 0: #的中し,コールする.
+                self.bluff = 0
+                self.isCall = True
+            else: #的中しているが降りる.
+                self.bluff = 1
+        else:
+            if call == 0: #外したがコールする.
+                self.bluff = 1
+                self.isCall = True
+            else: #外し,降りる.
+                self.bluff = 0
+        self.predict = (self.predict + self.bluff)%2 #嘘をついた場合,self.predictがひっくり返る.
+
+    def print_call(self):
+        """
+        コールの内容をプリントする関数.
+        メッセージの内容は未定.
+        """
+        pass
 
     def counterAttack(self, douter):
         doubter.money -= self.counter
@@ -248,6 +295,7 @@ class Player:
     def inputBet(self):
         """
         賭け金を標準入力するための関数.
+        後々消す予定.
         """
         while True:
             try:
@@ -324,18 +372,18 @@ class Player:
             if ans == 0: #的中しているが降りる.
                 self.bluff = 1
                 self.predict += self.bluff
-                self.call = 0
+                self.isCall = False
             else: #的中し,コールする.
                 self.bluff = 0
-                self.call = 1
+                self.isCall = True
         else:
             if ans == 0: #外し,降りる.
                 self.bluff = 0
-                self.call = 0
+                self.isCall = False
             else: #外したがコールする.
                 self.bluff = 1
                 self.predict += self.bluff
-                self.call = 1
+                self.isCall = True
 
     def test_duel(self, coin, players, correct):
         """

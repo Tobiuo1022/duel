@@ -29,7 +29,7 @@ class Dealer:
 
     def announce_call(self, coin, players):
         for p in players:
-            if p.call == 1:
+            if p.isCall == True:
                 print(p.name +'さん : Call')
             else:
                 print(p.name +'さん : Fold')
@@ -103,16 +103,15 @@ class Dealer:
                     douted.couterAttack(doubter)
             main.pleaseEnter(1)
 
-    def pay(self, coin, player):
+    def pay(self, c, player):
         """
-        お金を清算する関数
+        お金を清算する関数.
         """
-        if player.predict%2 == coin.num:
-            rate = 2
-            if player.mode == 2:
-                rate = 3
-            player.money += player.bet*rate;
-            print(player.name +'へ'+ str(player.bet*rate) +'円をお支払いします.')
+        rate = 2
+        if player.predict == c.num: #予想が的中した場合(嘘含む).
+            bonus = player.bet*rate #勝利金
+            player.money += bonus
+            print(player.name +'へ'+ str(bonus) +'円をお支払いします.')
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
 

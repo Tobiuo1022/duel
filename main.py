@@ -93,14 +93,14 @@ False
 
 >>> updateValue(players)
 
->>> print(p1.mode, p1.bet, p1.predict, p1.bluff, p1.call, p1.doubt, p4.target)
-0 0 0 0 0 0 0
->>> print(p2.mode, p2.bet, p2.predict, p2.bluff, p2.call, p2.doubt, p4.target)
-0 0 0 0 0 0 0
->>> print(p3.mode, p3.bet, p3.predict, p3.bluff, p3.call, p3.doubt, p4.target)
-0 0 0 0 0 0 0
->>> print(p4.mode, p4.bet, p4.predict, p4.bluff, p4.call, p4.doubt, p4.target)
-0 0 0 0 0 0 0
+>>> print(p1.mode, p1.bet, p1.predict, p1.bluff, p1.isCall, p1.doubt, p4.target)
+0 0 0 0 False 0 0
+>>> print(p2.mode, p2.bet, p2.predict, p2.bluff, p2.isCall, p2.doubt, p4.target)
+0 0 0 0 False 0 0
+>>> print(p3.mode, p3.bet, p3.predict, p3.bluff, p3.isCall, p3.doubt, p4.target)
+0 0 0 0 False 0 0
+>>> print(p4.mode, p4.bet, p4.predict, p4.bluff, p4.isCall, p4.doubt, p4.target)
+0 0 0 0 False 0 0
 
 >>> print(p1.money, p1.counter)
 10100 0
@@ -196,7 +196,6 @@ def play(d, players):
         c.toss()
         pleaseEnter(1)
 
-        print('\n-- Call or Fold --') #コールフェイズ
         callPhase(c, players)
         d.announce_call(c, players)
 
@@ -207,9 +206,7 @@ def play(d, players):
         d.announce_doubt(players)
         detectPhase(d, players)
 
-        print('\n-- PayPhase --') #ペイフェイズ
         payPhase(c, d, players)
-        pleaseEnter(1)
 
         updateValue(players) #カウンター値の更新
 
@@ -231,8 +228,11 @@ def betPhase(players):
             pleaseEnter(9)
 
 def callPhase(c, players):
+    print('\n-- Call or Fold --') #コールフェイズ
     for p in players:
-        p.callOrFold(c)
+        p.yourTurn()
+        p.assign_call(c.num, p.input_call(c.num))
+        pleaseEnter(4)
 
 def doubtPhase(players):
     for p in players:
@@ -245,8 +245,10 @@ def detectPhase(d, players):
         d.detect(p, linkId(p.doubt, players))
 
 def payPhase(c, d, players):
+    print('\n-- PayPhase --') #ペイフェイズ
     for p in players:
         d.pay(c, p)
+    pleaseEnter(1)
 
 def duelPhase(c, d, declarer, players):
     d.resetValue(players) #各プレイヤーのベッドを無かったことにする.
@@ -258,14 +260,14 @@ def updateValue(players):
     カウンターは更新する.
     """
     for p in players:
-        if p.call == 0:
+        if p.isCall == False:
             p.counter = int(p.bet/2)
         else:
             p.counter = int(p.counter/2)
-        p.mode = 0
-        p.bet = 0
+        p.mode = None
         p.predict = 0
-        p.call = 0
+        p.bet = 0
+        p.isCall = False
         p.bluff = 0
         p.doubt = 0
 
