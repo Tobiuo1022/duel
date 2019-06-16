@@ -17,35 +17,6 @@ class Player:
         self.playerNo = playerNo
         self.name = name
 
-    def selectMode(self):
-        """
-        モードを選択する関数.
-        後々消す予定.
-        """
-        print(str(self.name) +'さん')
-        main.pleaseEnter(1)
-        print('モードを選択してください.', end='')
-        print('(ブラフ, カウンター, トリプルアップ, デュエル)')
-        while True:
-            select = input()
-            if select == 'ブラフ':
-                self.mode = 0
-                break
-            elif select == 'カウンター':
-                self.mode = 1
-                break
-            elif select == 'トリプルアップ':
-                self.mode = 2
-                break
-            elif select == 'デュエル':
-                self.mode = 3
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print('もう一度入力してください.', end='')
-                print('(ブラフ, カウンター, トリプルアップ, デュエル)')
-                continue
-
     def input_mode(self):
         """
         モードを標準入力する関数.
@@ -79,21 +50,6 @@ class Player:
         モードを代入する関数.
         """
         self.mode = mode
-
-    def betting(self):
-        """
-        コイントスの結果を予想して所持金を賭ける関数.
-        のちのち消す予定.
-        """
-        print('どちらに賭けますか？(表, 裏)')
-        self.predict = self.answer('表', '裏') #入力
-
-        print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
-        self.bet = self.inputBet() #入力
-
-        self.money -= self.bet
-        print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
-        main.pleaseEnter(9)
 
     def input_predict(self):
         """
@@ -166,36 +122,6 @@ class Player:
                 continue
         print(targetName +'さんにデュエルを宣言します.')
         main.pleaseEnter(7)
-
-    def callOrFold(self, coin):
-        """
-        コイントスの結果と予想を判定して、降りるか降りないかを決める関数.
-        降りる降りないの順番が逆になっているので注意.
-        後々消す予定.
-        """
-        print(str(self.name) +'さん')
-        main.pleaseEnter(1)
-        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
-            print('予想が的中しました.(降りる, 降りない)')
-            ans = self.answer('降りる', '降りない')
-            if ans == 0: #的中しているが降りる.
-                self.bluff = 1
-                self.predict += self.bluff
-                self.isCall = False
-            else: #的中し,コールする.
-                self.bluff = 0
-                self.isCall = True
-        else:
-            print('予想が外れました.(降りる, 降りない)')
-            ans = self.answer('降りる', '降りない')
-            if ans == 0: #外し,降りる.
-                self.bluff = 0
-                self.isCall = False
-            else: #外したがコールする.
-                self.bluff = 1
-                self.predict += self.bluff
-                self.isCall = True
-        main.pleaseEnter(4)
 
     def input_call(self, c_num):
         """
@@ -364,62 +290,6 @@ class Player:
                 print(zero + 'もしくは' + first + 'でお答えください.')
         return ans
 
-    def inputBet(self):
-        """
-        賭け金を標準入力するための関数.
-        後々消す予定.
-        """
-        while True:
-            try:
-                ans = int(input())
-            except ValueError: #int型以外を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('int型で入力してください.(現在の所持金'+ str(self.money) +'円)')
-                continue
-            if 0 < ans and ans <= self.money:
-                break
-            elif ans <= 0: #0以下を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('それでは賭けになりません.(現在の所持金'+ str(self.money) +'円)')
-            else: #所持金を超えた額を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('賭け金が所持金を超えています.(現在の所持金'+ str(self.money) +'円)')
-        return ans
-
-    def inputDoubt(self, players):
-        """
-        任意のプレイヤーをダウトするための関数.
-        """
-        print(str(self.name) +'さん')
-        main.pleaseEnter(1)
-        print('どのプレイヤーをダウトしますか？', end='')
-        print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
-        doubtName = ''
-        while True:
-            doubtName = input()
-            if doubtName == players[0].name:
-                self.doubt = players[0].playerNo
-                break
-            elif doubtName == players[1].name:
-                self.doubt = players[1].playerNo
-                break
-            elif doubtName == players[2].name:
-                self.doubt = players[2].playerNo
-                break
-            elif doubtName == 'ダウトしない':
-                self.doubt = 0
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print('もう一度入力してください.', end='')
-                print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
-                continue
-        if self.doubt != 0:
-            print(doubtName +'さんをダウトします.')
-        else:
-            print('ダウトしません.')
-        main.pleaseEnter(5)
-
     def updateValue(self):
         """
         各プレイヤーの持っている値をリセットする.
@@ -439,54 +309,6 @@ class Player:
     def yourTurn(self):
         print(str(self.name) +'さんのターンです.')
         main.pleaseEnter(1)
-
-    #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
-    def test_betting(self, face, bet):
-        """
-        引数 :
-            face : 表は0,裏は1.
-            bet : 賭ける額.
-        """
-        self.predict = face
-        self.bet = bet
-        self.money -= self.bet
-
-    def test_callOrFold(self, coin, ans):
-        """
-        引数 :
-            ans : 降りるなら0,降りないなら1が入る.
-        """
-        if self.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
-            if ans == 0: #的中しているが降りる.
-                self.bluff = 1
-                self.predict += self.bluff
-                self.isCall = False
-            else: #的中し,コールする.
-                self.bluff = 0
-                self.isCall = True
-        else:
-            if ans == 0: #外し,降りる.
-                self.bluff = 0
-                self.isCall = False
-            else: #外したがコールする.
-                self.bluff = 1
-                self.predict += self.bluff
-                self.isCall = True
-
-    def test_duel(self, coin, players, correct):
-        """
-        引数 :
-            correct : コインの表裏の予想の結果.的中ならTrue,外れならFalseが入る.
-        """
-        target = main.linkId(self.target, players)
-        if correct:
-            steal = int(self.money/10)
-            self.money += steal
-            target.money -= steal
-        else:
-            steal = int(self.money/2)
-            self.money -= steal
-            target.money += steal
 
 def linkMode(mode):
     """

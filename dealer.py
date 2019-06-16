@@ -69,40 +69,6 @@ class Dealer:
 
         main.pleaseEnter(1)
 
-    def detect(self, doubter, doubted):
-        """
-        指定した相手にダウトを行い,所持金の増減を行う関数.
-
-        引数 :
-            doubter : ダウトするプレイヤー.
-            douted : ダウトされるプレイヤー.
-        """
-        if doubted != None:
-            doubted.predict -= doubted.bluff
-            print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
-            bonus = doubted.bet
-            penalty = doubted.bet
-            if doubted.bluff == 1:
-                if doubter.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
-                    bonus *= 2
-                    penalty *= 2
-                if doubted.mode == 0: #ペナルティが半減.
-                    doubted.money -= int(penalty/2);
-                doubter.money += bonus
-                doubted.money -= penalty;
-                print(doubter.name +'のダウトは成功です.')
-                print('ボーナスとして'+ doubter.name +'さんへ'+ str(bonus) +'円をお支払いします.')
-                print('ブラフ失敗のペナルティとして'+ doubted.name +'から'+ str(penalty) +'円を没収します.')
-            else:
-                if doubter.mode == 0:
-                    penalty = int(penalty/2) #ペナルティが半減する.
-                doubter.money -= penalty
-                print(doubter.name +'のダウトは失敗です.')
-                print('ペナルティとして'+ str(penalty) +'円を没収します.')
-                if doubted.mode == 1:
-                    douted.counterAttack(doubter)
-            main.pleaseEnter(1)
-
     def pay(self, c, player):
         """
         お金を清算する関数.
@@ -127,13 +93,6 @@ class Dealer:
                     maximum = p.money
                     declarer = p
         return declarer
-
-    def resetValue(self, players):
-        for p in players:
-            p.money += p.bet
-            p.mode = 0
-            p.bet = 0
-            p.predict = 0
 
     def checkFinish(self, players):
         """
@@ -173,54 +132,6 @@ class Dealer:
         for winner in winners:
             print(winner.name +'さん', end='')
         print('の勝利です!')
-
-    #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
-    def test_announce_doubt(self, players):
-        print('ダウトの結果を公表します.')
-
-        count = 0
-        for doubter in players:
-            count += doubter.doubt
-        if count == 0: #count == 0 → 誰もダウトをしていない.
-            print('ダウトしたプレイヤーはいませんでした.')
-
-        for p in players:
-            lowest = None
-            minimum = float('inf') #無限
-            for doubter in players:
-                doubted = main.linkId(doubter.doubt, players)
-                if doubted == p: #もし自分を疑っている場合
-                    if doubter.money < minimum: #所持金の低いプレイヤーが優先.
-                        minimum = doubter.money
-                        lowest = doubter
-                    doubter.doubt = 0 #所持金の低くないプレイヤーはダウトできなくなる.
-            if lowest != None:
-                lowest.doubt = p.playerNo
-
-        for doubter in players:
-            doubted = main.linkId(doubter.doubt, players)
-            if doubted != None:
-                print(doubter.name +' → '+ doubted.name)
-
-    def test_detect(self, doubter, doubted):
-        if doubted != None:
-            doubted.predict -= doubted.bluff
-            print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
-            if doubted.bluff == 1:
-                steal = doubted.bet
-                if doubter.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
-                    steal *= 2
-                doubted.money -= steal;
-                doubter.money += steal;
-                print(doubter.name +'のダウトは成功です.'+ str(steal) +'円が'+ doubted.name +'から'+ doubter.name +'へ移動します.')
-            else:
-                penalty = doubted.bet
-                if doubter.mode == 0:
-                    penalty = int(penalty/2) #ペナルティが半減する.
-                if doubted.mode == 1:
-                    penalty += doubted.counter
-                doubter.money -= penalty
-                print(doubter.name +'のダウトは失敗です.ペナルティとして'+ str(penalty) +'円を没収します.')
 
 if __name__ == '__main__':
     import doctest
