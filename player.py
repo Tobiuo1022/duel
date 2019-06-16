@@ -348,6 +348,22 @@ class Player:
             print('ダウトしません.')
         main.pleaseEnter(5)
 
+    def updateValue(self):
+        """
+        各プレイヤーの持っている値をリセットする.
+        カウンターは更新する.
+        """
+        if self.isCall == False:
+            self.counter = int(self.bet/2)
+        else:
+            self.counter = int(self.counter/2)
+        self.mode = None
+        self.predict = 0
+        self.bet = 0
+        self.isCall = False
+        self.bluff = 0
+        self.doubt = 0
+
     def yourTurn(self):
         print(str(self.name) +'さんのターンです.')
         main.pleaseEnter(1)

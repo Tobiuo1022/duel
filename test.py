@@ -6,10 +6,9 @@ class testOfPlayer(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_noneDoubt(self):
+    def test_call_bluff(self):
         """
-        各モードにおいてコールとフォールドが正常に行われるかテストする関数.
-        ダウトは無し.
+        ブラフモードにおいてコールとフォールドが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
@@ -91,15 +90,218 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p4.bluff, 0)
         self.assertEqual(p4.predict, 1)
 
-        d.pay(c, p1)
-        d.pay(c, p2)
-        d.pay(c, p3)
-        d.pay(c, p4)
+        for p in players:
+            d.pay(c, p)
+
+        for p in players:
+            p.updateValue()
 
         self.assertEqual(p1.money, 10100)
+        self.assertEqual(p1.counter, 0)
         self.assertEqual(p2.money, 9800)
+        self.assertEqual(p2.counter, 100)
         self.assertEqual(p3.money, 10300)
+        self.assertEqual(p3.counter, 0)
         self.assertEqual(p4.money, 9600)
+        self.assertEqual(p4.counter, 200)
+
+    def test_call_counter(self):
+        """
+        カウンターモードにおいてコールとフォールドが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
+
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p2.money, 10000)
+        self.assertEqual(p2.counter, 0)
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+
+        #モードの代入.
+        p1.assign_mode(1)
+        p2.assign_mode(1)
+        p3.assign_mode(1)
+        p4.assign_mode(1)
+
+        #賭け金の代入.
+        p1.assign_predict(0)
+        p2.assign_predict(0)
+        p3.assign_predict(1)
+        p4.assign_predict(1)
+
+        p1.assign_bet(100)
+        p2.assign_bet(200)
+        p3.assign_bet(300)
+        p4.assign_bet(400)
+
+        self.assertEqual(p1.mode, 1)
+        self.assertEqual(p1.predict, 0)
+        self.assertEqual(p1.bet, 100)
+        self.assertEqual(p1.money, 9900)
+
+        self.assertEqual(p2.mode, 1)
+        self.assertEqual(p2.predict, 0)
+        self.assertEqual(p2.bet, 200)
+        self.assertEqual(p2.money, 9800)
+
+        self.assertEqual(p3.mode, 1)
+        self.assertEqual(p3.predict, 1)
+        self.assertEqual(p3.bet, 300)
+        self.assertEqual(p3.money, 9700)
+
+        self.assertEqual(p4.mode, 1)
+        self.assertEqual(p4.predict, 1)
+        self.assertEqual(p4.bet, 400)
+        self.assertEqual(p4.money, 9600)
+
+        #コイントス
+        c.num = 0
+
+        #コールの代入.
+        p1.assign_call(c.num, 0) #的中し,コールする.
+        p2.assign_call(c.num, 1) #的中しているが降りる.
+        p3.assign_call(c.num, 0) #外したがコールする.
+        p4.assign_call(c.num, 1) #外し,降りる.
+
+        self.assertEqual(p1.isCall, True)
+        self.assertEqual(p1.bluff, 0)
+        self.assertEqual(p1.predict, 0)
+
+        self.assertEqual(p2.isCall, False)
+        self.assertEqual(p2.bluff, 1)
+        self.assertEqual(p2.predict, 1)
+
+        self.assertEqual(p3.isCall, True)
+        self.assertEqual(p3.bluff, 1)
+        self.assertEqual(p3.predict, 0)
+
+        self.assertEqual(p4.isCall, False)
+        self.assertEqual(p4.bluff, 0)
+        self.assertEqual(p4.predict, 1)
+
+        for p in players:
+            d.pay(c, p)
+
+        for p in players:
+            p.updateValue()
+
+        self.assertEqual(p1.money, 10100)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p2.money, 9800)
+        self.assertEqual(p2.counter, 100)
+        self.assertEqual(p3.money, 10300)
+        self.assertEqual(p3.counter, 0)
+        self.assertEqual(p4.money, 9600)
+        self.assertEqual(p4.counter, 200)
+
+    def test_call_tripleUp(self):
+        """
+        トリプルアップモードにおいてコールとフォールドが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
+
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p2.money, 10000)
+        self.assertEqual(p2.counter, 0)
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p1.counter, 0)
+
+        #モードの代入.
+        p1.assign_mode(2)
+        p2.assign_mode(2)
+        p3.assign_mode(2)
+        p4.assign_mode(2)
+
+        #賭け金の代入.
+        p1.assign_predict(0)
+        p2.assign_predict(0)
+        p3.assign_predict(1)
+        p4.assign_predict(1)
+
+        p1.assign_bet(100)
+        p2.assign_bet(200)
+        p3.assign_bet(300)
+        p4.assign_bet(400)
+
+        self.assertEqual(p1.mode, 2)
+        self.assertEqual(p1.predict, 0)
+        self.assertEqual(p1.bet, 100)
+        self.assertEqual(p1.money, 9900)
+
+        self.assertEqual(p2.mode, 2)
+        self.assertEqual(p2.predict, 0)
+        self.assertEqual(p2.bet, 200)
+        self.assertEqual(p2.money, 9800)
+
+        self.assertEqual(p3.mode, 2)
+        self.assertEqual(p3.predict, 1)
+        self.assertEqual(p3.bet, 300)
+        self.assertEqual(p3.money, 9700)
+
+        self.assertEqual(p4.mode, 2)
+        self.assertEqual(p4.predict, 1)
+        self.assertEqual(p4.bet, 400)
+        self.assertEqual(p4.money, 9600)
+
+        #コイントス
+        c.num = 0
+
+        #コールの代入.
+        p1.assign_call(c.num, 0) #的中し,コールする.
+        p2.assign_call(c.num, 1) #的中しているが降りる.
+        p3.assign_call(c.num, 0) #外したがコールする.
+        p4.assign_call(c.num, 1) #外し,降りる.
+
+        self.assertEqual(p1.isCall, True)
+        self.assertEqual(p1.bluff, 0)
+        self.assertEqual(p1.predict, 0)
+
+        self.assertEqual(p2.isCall, False)
+        self.assertEqual(p2.bluff, 1)
+        self.assertEqual(p2.predict, 1)
+
+        self.assertEqual(p3.isCall, True)
+        self.assertEqual(p3.bluff, 1)
+        self.assertEqual(p3.predict, 0)
+
+        self.assertEqual(p4.isCall, False)
+        self.assertEqual(p4.bluff, 0)
+        self.assertEqual(p4.predict, 1)
+
+        for p in players:
+            d.pay(c, p)
+
+        for p in players:
+            p.updateValue()
+
+        self.assertEqual(p1.money, 10100)
+        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p2.money, 9800)
+        self.assertEqual(p2.counter, 100)
+        self.assertEqual(p3.money, 10900) #トリプルアップによって4倍.
+        self.assertEqual(p3.counter, 0)
+        self.assertEqual(p4.money, 9600)
+        self.assertEqual(p4.counter, 200)
 
 def test_betting(player, predict, bet):
     """

@@ -108,6 +108,8 @@ class Dealer:
         お金を清算する関数.
         """
         rate = 2
+        if player.mode == 2 and player.bluff == 1: #トリプルアップ適用.
+            rate *= 2
         if player.predict == c.num: #予想が的中した場合(嘘含む).
             bonus = player.bet*rate #勝利金
             player.money += bonus
