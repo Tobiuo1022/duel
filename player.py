@@ -5,7 +5,7 @@ class Player:
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
     counter = 0 #カウンターの値
-    mode = 0
+    mode = None #選択したモード
     bet = 0 #賭け金
     predict = 0 #予想した面.
     call = 0 #foldするなら0,コールするなら1が入る.
@@ -18,6 +18,10 @@ class Player:
         self.name = name
 
     def selectMode(self):
+        """
+        モードを選択する関数.
+        後々消す予定.
+        """
         print(str(self.name) +'さん')
         main.pleaseEnter(1)
         print('モードを選択してください.', end='')
@@ -42,9 +46,44 @@ class Player:
                 print('(ブラフ, カウンター, トリプルアップ, デュエル)')
                 continue
 
+    def input_mode(self):
+        """
+        モードを標準入力する関数.
+        """
+        print('モードを選択してください.', end='')
+        print('(ブラフ, カウンター, トリプルアップ, デュエル)')
+        mode = None #選択されたモード.
+        while True:
+            select = input()
+            if select == 'ブラフ':
+                mode = 0
+                break
+            elif select == 'カウンター':
+                mode = 1
+                break
+            elif select == 'トリプルアップ':
+                mode = 2
+                break
+            elif select == 'デュエル':
+                mode = 3
+                break
+            else:
+                print('\u001b[2A\u001b[0J', end='')
+                print('もう一度入力してください.', end='')
+                print('(ブラフ, カウンター, トリプルアップ, デュエル)')
+                continue
+        return mode
+
+    def assign_mode(self, mode):
+        """
+        モードを代入する関数.
+        """
+        self.mode = mode
+
     def betting(self):
         """
         コイントスの結果を予想して所持金を賭ける関数.
+        のちのち消す予定.
         """
         print('どちらに賭けますか？(表, 裏)')
         self.predict = self.answer('表', '裏') #入力
@@ -55,6 +94,55 @@ class Player:
         self.money -= self.bet
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
         main.pleaseEnter(9)
+
+    def input_predict(self):
+        """
+        コイントスの予想を標準入力する関数.
+        """
+        print('どちらに賭けますか？(表, 裏)')
+        predict = self.answer('表', '裏') #入力
+        return predict
+
+    def assign_predict(self, predict):
+        """
+        コイントスの予想を代入する関数.
+        """
+        self.predict = predict
+
+    def input_bet(self):
+        """
+        賭け金を標準入力する関数.
+        """
+        print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
+        while True:
+            try:
+                ans = int(input())
+            except ValueError: #int型以外を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('int型で入力してください.(現在の所持金'+ str(self.money) +'円)')
+                continue
+            if 0 < ans and ans <= self.money:
+                break
+            elif ans <= 0: #0以下を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('それでは賭けになりません.(現在の所持金'+ str(self.money) +'円)')
+            else: #所持金を超えた額を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('賭け金が所持金を超えています.(現在の所持金'+ str(self.money) +'円)')
+        return ans
+
+    def assign_bet(self, bet):
+        """
+        賭け金を代入する関数.
+        """
+        self.bet = bet
+        self.money -= bet
+
+    def print_bet(self):
+        """
+        ベットの内容をプリントする関数.
+        """
+        print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
 
     def inputTarget(self, players):
         print('どのプレイヤーにデュエルを宣言しますか？', end='')
@@ -211,6 +299,10 @@ class Player:
         else:
             print('ダウトしません.')
         main.pleaseEnter(5)
+
+    def yourTurn(self):
+        print(str(self.name) +'さんのターンです.')
+        main.pleaseEnter(1)
 
     #以下,標準出力を使った関数のテストが面倒臭いがために作ったテスト用関数。
     def test_betting(self, face, bet):

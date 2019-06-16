@@ -180,7 +180,6 @@ def play(d, players):
 
         d.announce_state(players) #各プレイヤーの所持金を公表.
 
-        print('\n-- BetPhase --') #賭けフェイズ
         betPhase(players)
 
         declarer = d.checkDuel(players) #宣言者を決定.
@@ -217,14 +216,19 @@ def play(d, players):
     d.finishGame(players)
 
 def betPhase(players):
+    print('\n-- BetPhase --')
     for p in players:
-        p.selectMode()
+        p.yourTurn()
+        p.assign_mode(p.input_mode())
         if p.mode == 3: #デュエルモード
             others = players[:]
             others.remove(p)
             p.inputTarget(others)
         else:
-            p.betting()
+            p.assign_predict(p.input_predict())
+            p.assign_bet(p.input_bet())
+            p.print_bet()
+            pleaseEnter(9)
 
 def callPhase(c, players):
     for p in players:
