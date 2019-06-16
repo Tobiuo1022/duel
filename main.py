@@ -199,12 +199,12 @@ def play(d, players):
         callPhase(c, players)
         d.announce_call(c, players)
 
-        print('\n-- DoubtPhase --') #ダウトフェイズ
         doubtPhase(players)
-        d.annouce_mode(players)
+        d.announce_mode(players)
         pleaseEnter(1)
+        print('')
         d.announce_doubt(players)
-        detectPhase(d, players)
+        detectPhase(players)
 
         payPhase(c, d, players)
 
@@ -228,21 +228,26 @@ def betPhase(players):
             pleaseEnter(9)
 
 def callPhase(c, players):
-    print('\n-- Call or Fold --') #コールフェイズ
+    print('\n-- Call or Fold --')
     for p in players:
         p.yourTurn()
         p.assign_call(c.num, p.input_call(c.num))
         pleaseEnter(4)
 
 def doubtPhase(players):
+    print('\n-- DoubtPhase --')
     for p in players:
+        p.yourTurn()
         others = players[:]
         others.remove(p)
-        p.inputDoubt(others)
+        p.assign_doubt(p.input_doubt(others))
+        pleaseEnter(5)
 
-def detectPhase(d, players):
+def detectPhase(players):
     for p in players:
-        d.detect(p, linkId(p.doubt, players))
+        if linkId(p.doubt, players) != None:
+            p.detect(players)
+            pleaseEnter(1)
 
 def payPhase(c, d, players):
     print('\n-- PayPhase --') #ペイフェイズ
