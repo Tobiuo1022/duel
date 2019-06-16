@@ -258,6 +258,7 @@ def updateValue(players):
     """
     各プレイヤーの持っている値をリセットする.
     カウンターは更新する.
+    player.pyに移動したので後々消す予定.
     """
     for p in players:
         if p.isCall == False:
