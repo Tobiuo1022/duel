@@ -22,7 +22,7 @@ class Player:
         モードを標準入力する関数.
         """
         print('モードを選択してください.', end='')
-        print('(ブラフ, カウンター, トリプルアップ, デュエル)')
+        print('(ブラフ, カウンター, ダブルアップ, デュエル)')
         mode = None #選択されたモード.
         while True:
             select = input()
@@ -32,7 +32,7 @@ class Player:
             elif select == 'カウンター':
                 mode = 1
                 break
-            elif select == 'トリプルアップ':
+            elif select == 'ダブルアップ':
                 mode = 2
                 break
             elif select == 'デュエル':
@@ -41,7 +41,7 @@ class Player:
             else:
                 print('\u001b[2A\u001b[0J', end='')
                 print('もう一度入力してください.', end='')
-                print('(ブラフ, カウンター, トリプルアップ, デュエル)')
+                print('(ブラフ, カウンター, ダブルアップ, デュエル)')
                 continue
         return mode
 
@@ -320,7 +320,7 @@ def linkMode(mode):
     elif mode == 1:
         modeName = 'カウンター'
     elif mode == 2:
-        modeName = 'トリプルアップ'
+        modeName = 'ダブルアップ'
     return modeName
 
 if __name__ == '__main__':

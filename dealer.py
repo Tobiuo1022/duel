@@ -81,9 +81,9 @@ class Dealer:
         """
         rate = 2
         if player.predict == c.num: #予想が的中した場合(嘘含む).
-            if player.mode == 2 and player.isCall == True and player.bluff == 1: #トリプルアップ適用.
+            if player.mode == 2 and player.isCall == True and player.bluff == 1: #ダブルアップ適用.
                 rate *= 2
-                print('トリプルアップ成功です.', end='')
+                print('ダブルアップ成功です.', end='')
             bonus = player.bet*rate #勝利金
             player.money += bonus
             print(player.name +'へ'+ str(bonus) +'円をお支払いします.')

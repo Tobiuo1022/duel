@@ -176,9 +176,9 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p4.money, 9900)
         self.assertEqual(p4.counter, 50)
 
-    def test_call_tripleUp(self):
+    def test_call_doubleUp(self):
         """
-        トリプルアップモードにおいてコールとフォールドが正常に行われるかテストする関数.
+        ダブルアップモードにおいてコールとフォールドが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
@@ -256,7 +256,7 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p1.counter, 0)
         self.assertEqual(p2.money, 9900)
         self.assertEqual(p2.counter, 50)
-        self.assertEqual(p3.money, 10300) #トリプルアップによって4倍.
+        self.assertEqual(p3.money, 10300) #ダブルアップによって4倍.
         self.assertEqual(p3.counter, 0)
         self.assertEqual(p4.money, 9900)
         self.assertEqual(p4.counter, 50)
@@ -285,13 +285,13 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
 
         #モードの代入.
@@ -304,7 +304,7 @@ class testOfPlayer(unittest.TestCase):
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #トリプルアップモード.
+            elif n <= 24: #ダブルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
@@ -411,13 +411,13 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
 
         #モードの代入.
@@ -430,7 +430,7 @@ class testOfPlayer(unittest.TestCase):
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #トリプルアップモード.
+            elif n <= 24: #ダブルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
@@ -513,9 +513,9 @@ class testOfPlayer(unittest.TestCase):
             else:
                 self.assertEqual(p.counter, 0)
 
-    def test_doubt_tripleUp(self):
+    def test_doubt_doubleUp(self):
         """
-        トリプルアップモードにおいてダウトが正常に行われるかテストする関数.
+        ダブルアップモードにおいてダウトが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
@@ -537,26 +537,26 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
 
         #モードの代入.
         n = 0
         for p in players:
             n += 1
-            if n%2 == 1: #奇数組はトリプルアップモード.
+            if n%2 == 1: #奇数組はダブルアップモード.
                 p.assign_mode(2)
             elif n <= 8: #ブラフモード.
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #トリプルアップモード.
+            elif n <= 24: #ダブルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
