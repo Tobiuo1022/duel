@@ -21,28 +21,10 @@ class Player:
         """
         モードを標準入力する関数.
         """
+        choices = ['ブラフ', 'カウンター', 'ダブルアップ']
         print('モードを選択してください.', end='')
-        print('(ブラフ, カウンター, ダブルアップ, デュエル)')
-        mode = None #選択されたモード.
-        while True:
-            select = input()
-            if select == 'ブラフ':
-                mode = 0
-                break
-            elif select == 'カウンター':
-                mode = 1
-                break
-            elif select == 'ダブルアップ':
-                mode = 2
-                break
-            elif select == 'デュエル':
-                mode = 3
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print('もう一度入力してください.', end='')
-                print('(ブラフ, カウンター, ダブルアップ, デュエル)')
-                continue
+        print_choices(choices)
+        mode = answer(choices) #入力
         return mode
 
     def assign_mode(self, mode):
@@ -55,8 +37,10 @@ class Player:
         """
         コイントスの予想を標準入力する関数.
         """
-        print('どちらに賭けますか？(表, 裏)')
-        predict = self.answer('表', '裏') #入力
+        choices = ['表', '裏']
+        print('どちらに賭けますか？', end='')
+        print_choices(choices)
+        predict = answer(choices) #入力
         return predict
 
     def assign_predict(self, predict):
@@ -133,11 +117,13 @@ class Player:
         返り値 :
             call : コールなら0,フォールドなら1が入る.
         """
+        choices = ['Call', 'Fold']
         if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
-            print('予想が的中しました.(Call, Fold)')
+            print('予想が的中しました.', end='')
         else:
-            print('予想が外れました.(Call, Fold)')
-        call = self.answer('Call', 'Fold')
+            print('予想が外れました.', end='')
+        print_choices(choices)
+        call = answer(choices) #入力
         return call
 
     def assign_call(self, c_num, call):
@@ -172,31 +158,15 @@ class Player:
         """
         ダウトする相手を標準入力する関数.
         """
+        choices = []
+        choices.append('ダウトしない')
+        for p in players:
+            choices.append(p.name)
         print('どのプレイヤーをダウトしますか？', end='')
-        print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
-        doubt = None
-        doubtName = ''
-        while True:
-            doubtName = input()
-            if doubtName == players[0].name:
-                doubt = players[0].playerNo
-                break
-            elif doubtName == players[1].name:
-                doubt = players[1].playerNo
-                break
-            elif doubtName == players[2].name:
-                doubt = players[2].playerNo
-                break
-            elif doubtName == 'ダウトしない':
-                doubt = 0
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print('もう一度入力してください.', end='')
-                print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name) +', ダウトしない)')
-                continue
+        print_choices(choices)
+        doubt = answer(choices) #入力
         if doubt != 0:
-            print(doubtName +'さんをダウトします.')
+            print('ダウトします.')
         else:
             print('ダウトしません.')
         return doubt
@@ -261,30 +231,6 @@ class Player:
             print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ lower.name +'へ移動します.')
         self.predict = 0
 
-    def answer(self, zero, first):
-        """
-        コインの表裏やYesとNoを標準入力するための関数.
-
-        引数 :
-            zero : 表もしくはYが対応.
-            first : 裏もしくはNが対応.
-
-        返り値 :
-            ans : 0か1で返る.
-        """
-        ans = 0
-        while True: #ちゃんとした入力がされるまで永遠に質問する.
-            str = input()
-            if str == zero:
-                break
-            elif str == first:
-                ans = 1
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print(zero + 'もしくは' + first + 'でお答えください.')
-        return ans
-
     def updateValue(self):
         """
         各プレイヤーの持っている値をリセットする.
@@ -304,6 +250,41 @@ class Player:
     def yourTurn(self):
         print(str(self.name) +'さんのターンです.')
         main.pleaseEnter(1)
+
+def answer(choices):
+    """
+    標準入力で選択肢を選ぶ関数.
+
+    引数 :
+        choices : 選択肢のリスト.str型.
+
+    返り値 :
+        ans : choicesのインデックスが返る.
+    """
+    ans = None
+    while True: #ちゃんとした入力がされるまで永遠に質問する.
+        str = input()
+        n = 0
+        for choice in choices:
+            if str == choice:
+                ans = n
+                return ans
+            else:
+                n += 1
+        print('\u001b[2A\u001b[0J', end='')
+        print('もう一度入力してください.', end='')
+        print_choices(choices)
+
+def print_choices(choices):
+    """
+    標準入力系の関数で選択肢をプリントする関数.
+    """
+    print('(', end='')
+    for choice in choices:
+        print(str(choice), end='')
+        if choice != choices[-1]:
+            print(', ', end='')
+    print(')')
 
 def linkMode(mode):
     """
