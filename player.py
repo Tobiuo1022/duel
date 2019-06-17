@@ -1,4 +1,4 @@
-import coin, main
+import coin, main, math
 
 class Player:
     playerNo = 0 #プレイヤーの番号.
@@ -52,22 +52,24 @@ class Player:
         """
         賭け金を標準入力する関数.
         """
-        print('いくら賭けますか？(現在の所持金'+ str(self.money) +'円)')
+        limmit = math.ceil(self.money/3) #賭け金の上限額.所持金の3分の1.小数点は切り上げ.
+        print('いくら賭けますか？', end='')
         while True:
+            print('(現在の所持金'+ str(self.money) +'円)(上限'+ str(limmit) +'円)')
             try:
                 ans = int(input())
             except ValueError: #int型以外を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('int型で入力してください.(現在の所持金'+ str(self.money) +'円)')
+                print('int型で入力してください.', end='')
                 continue
-            if 0 < ans and ans <= self.money:
+            if 0 < ans and ans <= limmit:
                 break
             elif ans <= 0: #0以下を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('それでは賭けになりません.(現在の所持金'+ str(self.money) +'円)')
+                print('それでは賭けになりません.', end='')
             else: #所持金を超えた額を入力された場合.
                 print('\u001b[2A\u001b[0J', end='')
-                print('賭け金が所持金を超えています.(現在の所持金'+ str(self.money) +'円)')
+                print('賭け金が上限を超えています.', end='')
         return ans
 
     def assign_bet(self, bet):
