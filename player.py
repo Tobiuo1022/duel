@@ -266,6 +266,22 @@ class Player:
             print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ target.name +'へ移動します.')
         self.predict = 0
 
+    def newduel(self, c, lower):
+        """
+        デュエルを行う関数.
+        """
+        if self.predict == c.num:
+            steal = int(self.money/5)
+            self.money += steal
+            lower.money -= steal
+            print('予想が的中しました.'+ str(steal) +'円が'+ lower.name +'から'+ self.name +'へ移動します.')
+        else:
+            steal = int(self.money/2)
+            self.money -= steal
+            lower.money += steal
+            print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ lower.name +'へ移動します.')
+        self.predict = 0
+
     def answer(self, zero, first):
         """
         コインの表裏やYesとNoを標準入力するための関数.

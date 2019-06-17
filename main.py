@@ -1,27 +1,26 @@
 def play(d, players):
-    d.entry(players)
     print('\nゲームを開始します.')
+    pleaseEnter(1)
     round = 0
-    goNextRound = True
+    nextRound = True #ペイフェイズとデュエルフェイズのどちらから戻ってきたのかの判定.
     while d.checkFinish(players) == False:
-        if goNextRound == True:
+        if nextRound == True:
             round += 1
             print('\n-- '+ str(round) +'Round --')
-        else:
-            print('再度BetPhaseを行います.\n')
-            goNextRound = True
 
         d.announce_state(players) #各プレイヤーの所持金を公表.
+        pleaseEnter(1)
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        if d.newcheckDuel(players, higher, lower) == True:
+            newduelPhase(c, higher, lower)
+            nextRound = False
+            continue
+        else:
+            nextRound = True
 
         betPhase(players)
-
-        declarer = d.checkDuel(players) #宣言者を決定.
-        if declarer != None: #デュエルを宣言したプレイヤーがいればデュエルフェイズを行う.
-            print('\n-- DuelPhase --') #デュエルフェイズ
-            duelPhase(c, d, declarer, players)
-            goNextRound = False
-            continue
-
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
         pleaseEnter(1)
 
@@ -31,6 +30,7 @@ def play(d, players):
 
         callPhase(c, players)
         d.announce_call(c, players)
+        pleaseEnter(1)
 
         doubtPhase(players)
         d.delete_overlap_doubt(players)
@@ -94,8 +94,25 @@ def payPhase(c, d, players):
     pleaseEnter(1)
 
 def duelPhase(c, d, declarer, players):
+    print('\n-- DuelPhase --') #デュエルフェイズ
     d.resetValue(players) #各プレイヤーのベッドを無かったことにする.
     declarer.duel(c, players)
+
+def newduelPhase(c, higher, lower):
+    print('\n-- DuelPhase --') #デュエルフェイズ
+    print(higher.name +'さんが'+ lower.name +'さんへデュエルを行います.')
+
+    print(higher.name +'さん.')
+    pleaseEnter(1)
+    higher.assign_predict(higher.input_predict())
+
+    c.toss()
+    pleaseEnter(1)
+    print('')
+
+    higher.newduel(c, lower)
+    pleaseEnter(1)
+    print('')
 
 def linkId(id, players):
     """
@@ -124,6 +141,7 @@ if __name__ == '__main__':
     c = coin.Coin()
     d = dealer.Dealer()
     players = []
+    d.entry(players)
     play(d, players)
     import doctest
     doctest.testmod()

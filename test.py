@@ -700,5 +700,58 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p3.money, 9550)
         self.assertEqual(p4.money, 9900)
 
+    def test_duel(self):
+        """
+        条件を満たした際,デュエルが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        self.assertEqual(False, d.newcheckDuel(players, higher, lower))
+
+        #デュエル成功パターン
+        p1.money = 2000
+        p2.money = 5000
+        p3.money = 10000
+        p4.money = 12000
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        if d.newcheckDuel(players, higher, lower) == True:
+            higher.assign_predict(0)
+            c.num = 0
+            higher.newduel(c, lower)
+
+        self.assertEqual(p1.money, -400)
+        self.assertEqual(p2.money, 5000)
+        self.assertEqual(p3.money, 10000)
+        self.assertEqual(p4.money, 14400)
+
+        #デュエル失敗パターン
+        p1.money = 2000
+        p2.money = 5000
+        p3.money = 10000
+        p4.money = 12000
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        if d.newcheckDuel(players, higher, lower) == True:
+            higher.assign_predict(0)
+            c.num = 1
+            higher.newduel(c, lower)
+
+        self.assertEqual(p1.money, 8000)
+        self.assertEqual(p2.money, 5000)
+        self.assertEqual(p3.money, 10000)
+        self.assertEqual(p4.money, 6000)
+
 if __name__ == '__main__':
     unittest.main()

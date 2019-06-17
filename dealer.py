@@ -91,6 +91,9 @@ class Dealer:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
 
     def checkDuel(self, players):
+        """
+        後々消す予定.
+        """
         declarer = None
         maximum = 0
         for p in players:
@@ -99,6 +102,41 @@ class Dealer:
                     maximum = p.money
                     declarer = p
         return declarer
+
+
+    def return_higher(self, players):
+        """
+        最も所持金の高いプレイヤーを返す関数.
+        """
+        higher = None
+        maximum = 0
+        for p in players:
+            if p.money > maximum:
+                maximum = p.money
+                higher = p
+        return higher
+
+    def return_lower(self, players):
+        """
+        最も所持金の低いプレイヤーを返す関数.
+        """
+        lower = None
+        minimum = float('inf') #無限
+        for p in players:
+            if p.money <= minimum:
+                minimum = p.money
+                lower = p
+        return lower
+
+    def newcheckDuel(self, players, higher, lower):
+        """
+        デュエルが発生するか確認する関数.
+        """
+        if higher.money >= lower.money*5: #所持金の差が5倍以上ならTrueを返す.
+            higher.target = main.linkId(lower.playerNo, players)
+            return True
+        else:
+            return False
 
     def checkFinish(self, players):
         """
@@ -117,6 +155,7 @@ class Dealer:
         """
         print('\n-- FinishGame --')
         self.announce_state(players)
+        main.pleaseEnter(1)
         print('') #空白行
 
         winners = []
