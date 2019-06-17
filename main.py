@@ -55,15 +55,10 @@ def betPhase(players):
     for p in players:
         p.yourTurn()
         p.assign_mode(p.input_mode())
-        if p.mode == 3: #デュエルモード
-            others = players[:]
-            others.remove(p)
-            p.inputTarget(others)
-        else:
-            p.assign_predict(p.input_predict())
-            p.assign_bet(p.input_bet())
-            p.print_bet()
-            pleaseEnter(9)
+        p.assign_predict(p.input_predict())
+        p.assign_bet(p.input_bet())
+        p.print_bet()
+        pleaseEnter(9)
 
 def callPhase(c, players):
     print('\n-- Call or Fold --')

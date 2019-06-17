@@ -11,7 +11,6 @@ class Player:
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = 0 #ダウト先のプレイヤー.
-    target = 0 #デュエルを宣言するプレイヤー.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
@@ -83,29 +82,6 @@ class Player:
         ベットの内容をプリントする関数.
         """
         print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
-
-    def inputTarget(self, players):
-        print('どのプレイヤーにデュエルを宣言しますか？', end='')
-        print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name)+ ')')
-        targetName = ''
-        while True:
-            targetName = input()
-            if targetName == players[0].name:
-                self.target = players[0].playerNo
-                break
-            elif targetName == players[1].name:
-                self.target = players[1].playerNo
-                break
-            elif targetName == players[2].name:
-                self.target = players[2].playerNo
-                break
-            else:
-                print('\u001b[2A\u001b[0J', end='')
-                print('もう一度入力してください.', end='')
-                print('('+ str(players[0].name) +', '+ str(players[1].name) +', '+ str(players[2].name)+ ')')
-                continue
-        print(targetName +'さんにデュエルを宣言します.')
-        main.pleaseEnter(7)
 
     def input_call(self, c_num):
         """
