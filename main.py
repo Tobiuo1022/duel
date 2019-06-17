@@ -120,7 +120,7 @@ if __name__ == '__main__':
     c = coin.Coin()
     d = dealer.Dealer()
     players = []
-    d.entry(players)
+    d.entry(players, d.entry_num())
     play(d, players)
     import doctest
     doctest.testmod()

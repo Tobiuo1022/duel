@@ -2,11 +2,28 @@ import main, coin, player
 
 class Dealer:
 
-    def entry(self, players):
+    def entry_num(self):
+        print('参加人数を入力してください')
+        while True:
+            try:
+                num = int(input())
+            except ValueError: #int型以外を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('int型で入力してください.')
+                continue
+            if 1 < num:
+                print(str(num) +'人でゲームを始めます.')
+                break
+            else: #1以下を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('それではゲームを始められません.')
+        return num
+
+    def entry(self, players, num):
         """
         名前被りに対応していない.
         """
-        for n in range(4):
+        for n in range(num):
             print(str(n+1) +'人目の名前を入力してください.')
             name = str(input())
             while name == '':
