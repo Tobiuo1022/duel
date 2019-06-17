@@ -33,10 +33,14 @@ def play(d, players):
         d.announce_call(c, players)
 
         doubtPhase(players)
+        d.delete_overlap_doubt(players)
+
         d.announce_mode(players)
         pleaseEnter(1)
         print('')
         d.announce_doubt(players)
+        pleaseEnter(1)
+
         detectPhase(players)
 
         payPhase(c, d, players)

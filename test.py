@@ -639,37 +639,66 @@ class testOfPlayer(unittest.TestCase):
             else:
                 self.assertEqual(p.counter, 0)
 
-def test_betting(player, predict, bet):
-    """
-    引数 :
-        predict : 予想する面.表は0,裏は1.
-        bet : 賭ける額.
-    """
-    player.predict = predict
-    player.bet = bet
-    player.money -= player.bet
+    def test_overlap_doubt(self):
+        """
+        複数のプレイヤーでダウトが重複した場合にダウトが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
 
-def test_callOrFold(player, coin, ans):
-    """
-    引数 :
-        ans : 降りるなら0,降りないなら1が入る.
-    """
-    if player.predict == coin.num: #プレイヤーの予想とコインが一致してるかの判定
-        if ans == 0: #的中しているが降りる.
-            player.bluff = 1
-            player.predict += player.bluff
-            player.call = 0
-        else: #的中し,コールする.
-            player.bluff = 0
-            player.call = 1
-    else:
-        if ans == 0: #外し,降りる.
-            player.bluff = 0
-            player.call = 0
-        else: #外したがコールする.
-            player.bluff = 1
-            player.predict += player.bluff
-            player.call = 1
+        #モードの代入.
+        for p in players:
+            p.assign_mode(0)
+
+        #賭け金の代入.
+        p1.assign_predict(0)
+        p2.assign_predict(0)
+        p3.assign_predict(1)
+        p4.assign_predict(1)
+
+        n = 0
+        for p in players:
+            n += 1
+            p.assign_bet(100 * n)
+
+        #コイントス
+        c.num = 0
+
+        #コールの代入.
+        p1.assign_call(c.num, 0) #的中し,コールする.
+        p2.assign_call(c.num, 1) #的中しているが降りる.
+        p3.assign_call(c.num, 0) #外したがコールする.
+        p4.assign_call(c.num, 1) #外し,降りる.
+
+        #ダウトの入力.
+        p1.assign_doubt(3)
+        p2.assign_doubt(3)
+        p3.assign_doubt(0)
+        p4.assign_doubt(3)
+
+        d.delete_overlap_doubt(players)
+
+        #detect
+        for p in players:
+            if main.linkId(p.doubt, players) != None:
+                p.detect(players)
+
+        for p in players:
+            d.pay(c, p)
+
+        for p in players:
+            p.updateValue()
+
+        self.assertEqual(p1.money, 10100)
+        self.assertEqual(p2.money, 9800)
+        self.assertEqual(p3.money, 9550)
+        self.assertEqual(p4.money, 9900)
 
 if __name__ == '__main__':
     unittest.main()

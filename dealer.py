@@ -49,25 +49,31 @@ class Dealer:
         if count == 0: #count == 0 → 誰もダウトをしていない.
             print('ダウトしたプレイヤーはいませんでした.')
 
-        for p in players:
-            lowest = None
-            minimum = float('inf') #無限
-            for doubter in players:
-                doubted = main.linkId(doubter.doubt, players)
-                if doubted == p: #もし自分を疑っている場合
-                    if doubter.money < minimum: #所持金の低いプレイヤーが優先.
-                        minimum = doubter.money
-                        lowest = doubter
-                    doubter.doubt = 0 #所持金の低くないプレイヤーはダウトできなくなる.
-            if lowest != None:
-                lowest.doubt = p.playerNo
-
         for doubter in players:
             doubted = main.linkId(doubter.doubt, players)
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
 
-        main.pleaseEnter(1)
+    def delete_overlap_doubt(self, players):
+        """
+        複数のプレイヤーで重複したダウトを消す関数.
+        """
+        for p in players:
+            doubters = [] #自分を疑っているプレイヤー.
+            for doubter in players:
+                doubted = main.linkId(doubter.doubt, players)
+                if doubted == p: #もし自分を疑っている場合
+                    doubters.append(doubter)
+
+            lowest = None
+            minimum = float('inf') #無限
+            for doubter in doubters:
+                doubter.doubt = 0 #一旦全員のダウトを0にする.
+                if doubter.money < minimum: #所持金の低いプレイヤーが優先.
+                    lowest = doubter
+                    minimum = doubter.money
+            if lowest != None: #最も所持金の低いプレイヤーのみがダウトできる.
+                lowest.doubt = p.playerNo
 
     def pay(self, c, player):
         """
