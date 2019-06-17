@@ -715,7 +715,7 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        self.assertEqual(False, d.newcheckDuel(players, higher, lower))
+        self.assertEqual(False, d.checkDuel(players, higher, lower))
 
         #デュエル成功パターン
         p1.money = 2000
@@ -725,10 +725,10 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.newcheckDuel(players, higher, lower) == True:
+        if d.checkDuel(players, higher, lower) == True:
             higher.assign_predict(0)
             c.num = 0
-            higher.newduel(c, lower)
+            higher.duel(c, lower)
 
         self.assertEqual(p1.money, -400)
         self.assertEqual(p2.money, 5000)
@@ -743,10 +743,10 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.newcheckDuel(players, higher, lower) == True:
+        if d.checkDuel(players, higher, lower) == True:
             higher.assign_predict(0)
             c.num = 1
-            higher.newduel(c, lower)
+            higher.duel(c, lower)
 
         self.assertEqual(p1.money, 8000)
         self.assertEqual(p2.money, 5000)

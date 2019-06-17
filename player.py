@@ -245,28 +245,7 @@ class Player:
         self.money += self.counter
         print('さらに'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
 
-    def duel(self, coin, players):
-        target = main.linkId(self.target, players)
-        print(self.name +'さんが'+ target.name +'さんへデュエルを宣言しました.')
-        print('各プレイヤーのBetPhaseの内容を破棄し,DuelPhaseへ移行します.')
-        print(self.name +'さん,どちらに賭けますか？(表, 裏)')
-        self.predict = self.answer('表', '裏') #入力
-        coin.toss()
-        main.pleaseEnter(1)
-        print('')
-        if self.predict == coin.num:
-            steal = int(self.money/10)
-            self.money += steal
-            target.money -= steal
-            print('予想が的中しました.'+ str(steal) +'円が'+ target.name +'から'+ self.name +'へ移動します.')
-        else:
-            steal = int(self.money/2)
-            self.money -= steal
-            target.money += steal
-            print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ target.name +'へ移動します.')
-        self.predict = 0
-
-    def newduel(self, c, lower):
+    def duel(self, c, lower):
         """
         デュエルを行う関数.
         """

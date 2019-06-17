@@ -13,8 +13,8 @@ def play(d, players):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.newcheckDuel(players, higher, lower) == True:
-            newduelPhase(c, higher, lower)
+        if d.checkDuel(players, higher, lower) == True:
+            duelPhase(c, higher, lower)
             nextRound = False
             continue
         else:
@@ -93,12 +93,7 @@ def payPhase(c, d, players):
         d.pay(c, p)
     pleaseEnter(1)
 
-def duelPhase(c, d, declarer, players):
-    print('\n-- DuelPhase --') #デュエルフェイズ
-    d.resetValue(players) #各プレイヤーのベッドを無かったことにする.
-    declarer.duel(c, players)
-
-def newduelPhase(c, higher, lower):
+def duelPhase(c, higher, lower):
     print('\n-- DuelPhase --') #デュエルフェイズ
     print(higher.name +'さんが'+ lower.name +'さんへデュエルを行います.')
 
@@ -110,7 +105,7 @@ def newduelPhase(c, higher, lower):
     pleaseEnter(1)
     print('')
 
-    higher.newduel(c, lower)
+    higher.duel(c, lower)
     pleaseEnter(1)
     print('')
 

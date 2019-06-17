@@ -90,20 +90,6 @@ class Dealer:
         else:
             print('残念ですが'+ player.name +'の賭金は没収となります.')
 
-    def checkDuel(self, players):
-        """
-        後々消す予定.
-        """
-        declarer = None
-        maximum = 0
-        for p in players:
-            if p.mode == 3:
-                if p.money > maximum: #所持金の高いプレイヤーが優先.
-                    maximum = p.money
-                    declarer = p
-        return declarer
-
-
     def return_higher(self, players):
         """
         最も所持金の高いプレイヤーを返す関数.
@@ -128,7 +114,7 @@ class Dealer:
                 lower = p
         return lower
 
-    def newcheckDuel(self, players, higher, lower):
+    def checkDuel(self, players, higher, lower):
         """
         デュエルが発生するか確認する関数.
         """
