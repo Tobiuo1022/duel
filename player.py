@@ -10,7 +10,7 @@ class Player:
     bet = 0 #賭け金
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
-    doubt = 0 #ダウト先のプレイヤー.
+    doubt = None #ダウト先のプレイヤー.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
@@ -135,16 +135,17 @@ class Player:
         ダウトする相手を標準入力する関数.
         """
         choices = []
-        choices.append('ダウトしない')
         for p in players:
             choices.append(p.name)
+        choices.append('ダウトしない')
         print('どのプレイヤーをダウトしますか？', end='')
         print_choices(choices)
-        doubt = answer(choices) #入力
-        if doubt != 0:
-            print('ダウトします.')
-        else:
+        ans = answer(choices) #入力
+        if ans == len(choices)-1:
             print('ダウトしません.')
+        else:
+            doubt = players[ans]
+            print(doubt.name +'さんをダウトします.')
         return doubt
 
     def assign_doubt(self, doubt):
@@ -153,29 +154,29 @@ class Player:
         """
         self.doubt = doubt
 
-    def detect(self, players):
+    def detect(self):
         """
         指定した相手にダウトを行い,所持金の増減を行う関数.
         linkId()の消去に伴ってリファクタリング予定.
         """
-        doubted = main.linkId(self.doubt, players)
-        doubted.predict -= doubted.bluff #douted.predictを本来の結果に戻す.
-        print('\n'+ doubted.name +'が賭けた面は'+ coin.conversion(doubted.predict)+'でした.')
+        doubt = self.doubt
+        doubt.predict -= doubt.bluff #doubt.predictを本来の結果に戻す.
+        print('\n'+ doubt.name +'が賭けた面は'+ coin.conversion(doubt.predict)+'でした.')
 
-        bonus = doubted.bet
-        penalty = doubted.bet
-        if doubted.bluff == 1: #ダウト成功.
-            if self.mode == 0 and doubted.mode == 2: #奪う額が2倍になる.
+        bonus = doubt.bet
+        penalty = doubt.bet
+        if doubt.bluff == 1: #ダウト成功.
+            if self.mode == 0 and doubt.mode == 2: #奪う額が2倍になる.
                 bonus *= 2
                 penalty *= 2
-            if doubted.mode == 0: #ペナルティが半減.
+            if doubt.mode == 0: #ペナルティが半減.
                 penalty = int(penalty/2);
             self.money += bonus
-            doubted.money -= penalty;
+            doubt.money -= penalty;
 
             print(self.name +'のダウトは成功です.')
             print('ダウト成功のボーナスとして'+ self.name +'さんへ'+ str(bonus) +'円をお支払いします.')
-            print('ブラフ失敗のペナルティとして'+ doubted.name +'さんから'+ str(penalty) +'円を没収します.')
+            print('ブラフ失敗のペナルティとして'+ doubt.name +'さんから'+ str(penalty) +'円を没収します.')
 
         else: #ダウト失敗.
             if self.mode == 0:
@@ -183,13 +184,16 @@ class Player:
             self.money -= penalty
             print(self.name +'のダウトは失敗です.')
             print('ダウト失敗のペナルティとして'+ self.name +'さんから'+ str(penalty) +'円を没収します.')
-            if doubted.mode == 1:
-                doubted.counterAttack(doubted)
+            if doubt.mode == 1:
+                doubt.counterAttack(self)
 
     def counterAttack(self, doubter):
+        """
+        カウンターを実行する関数.
+        """
         doubter.money -= self.counter
         self.money += self.counter
-        print('さらに'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
+        print('さらにカウンターにより'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
 
     def duel(self, c, lower):
         """
@@ -221,7 +225,7 @@ class Player:
         self.bet = 0
         self.isCall = False
         self.bluff = 0
-        self.doubt = 0
+        self.doubt = None
 
     def yourTurn(self):
         print(str(self.name) +'さんのターンです.')

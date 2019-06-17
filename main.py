@@ -3,24 +3,24 @@ def play(d, players):
     pleaseEnter(1)
     round = 0
     nextRound = True #ペイフェイズとデュエルフェイズのどちらから戻ってきたのかの判定.
-    while d.checkFinish(players) == False:
+    while d.checkFinish(players) == False: #ゲームが終了するかの判定.
         if nextRound == True:
             round += 1
-            print('\n-- '+ str(round) +'Round --')
+            print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.checkDuel(players, higher, lower) == True:
-            duelPhase(c, higher, lower)
+        if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
+            duelPhase(c, higher, lower) #デュエルフェイズ.
             nextRound = False
             continue
         else:
             nextRound = True
 
-        betPhase(players)
+        betPhase(players) #ベットフェイズ
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
         pleaseEnter(1)
 
@@ -28,27 +28,27 @@ def play(d, players):
         c.toss()
         pleaseEnter(1)
 
-        callPhase(c, players)
-        d.announce_call(c, players)
+        callPhase(c, players) #コールフェイズ.
+        d.announce_call(c, players) #各プレイヤーのコールを公表.
         pleaseEnter(1)
 
-        doubtPhase(players)
-        d.delete_overlap_doubt(players)
+        doubtPhase(players) #ダウトフェイズ.
+        d.delete_overlap_doubt(players) #複数のプレイヤーで重複したダウトを消す.
 
-        d.announce_mode(players)
+        d.announce_mode(players) #各プレイヤーのモードを公表.
         pleaseEnter(1)
         print('')
-        d.announce_doubt(players)
+        d.announce_doubt(players) #各プレイヤーのダウト先を公表.
         pleaseEnter(1)
 
-        detectPhase(players)
+        detectPhase(players) #ディテクトフェイズ.
 
-        payPhase(c, d, players)
+        payPhase(c, d, players) #ペイフェイズ.
 
         for p in players:
-            p.updateValue()
+            p.updateValue() #値の更新.
 
-    d.finishGame(players)
+    d.finishGame(players) #ゲーム終了.
 
 def betPhase(players):
     print('\n-- BetPhase --')
@@ -71,15 +71,15 @@ def doubtPhase(players):
     print('\n-- DoubtPhase --')
     for p in players:
         p.yourTurn()
-        others = players[:]
+        others = players[:] #リストの複製.
         others.remove(p)
         p.assign_doubt(p.input_doubt(others))
         pleaseEnter(5)
 
 def detectPhase(players):
     for p in players:
-        if linkId(p.doubt, players) != None:
-            p.detect(players)
+        if p.doubt != None:
+            p.detect()
             pleaseEnter(1)
 
 def payPhase(c, d, players):
@@ -103,17 +103,6 @@ def duelPhase(c, higher, lower):
     higher.duel(c, lower)
     pleaseEnter(1)
     print('')
-
-def linkId(id, players):
-    """
-    プレイヤーのIDを引数に対応したplayerを返す関数.
-    """
-    player = None
-    for p in players:
-        if id == p.playerNo:
-            player = p
-
-    return player
 
 def pleaseEnter(num):
         """

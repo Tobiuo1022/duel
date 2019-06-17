@@ -337,16 +337,16 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1: #ダウト係は次のプレイヤーをダウトする.
-                p.assign_doubt(n+1)
+                p.assign_doubt(players[n])
             else:
-                p.assign_doubt(0) #ダウトされる側はダウトしない.
+                p.assign_doubt(None) #ダウトされる側はダウトしない.
 
         #detect
         n = 0
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect(players)
+                p.detect()
 
         for p in players:
             d.pay(c, p)
@@ -463,16 +463,16 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1: #ダウト係は次のプレイヤーをダウトする.
-                p.assign_doubt(n+1)
+                p.assign_doubt(players[n])
             else:
-                p.assign_doubt(0) #ダウトされる側はダウトしない.
+                p.assign_doubt(None) #ダウトされる側はダウトしない.
 
         #detect
         n = 0
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect(players)
+                p.detect()
 
         for p in players:
             d.pay(c, p)
@@ -589,16 +589,16 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1: #ダウト係は次のプレイヤーをダウトする.
-                p.assign_doubt(n+1)
+                p.assign_doubt(players[n])
             else:
-                p.assign_doubt(0) #ダウトされる側はダウトしない.
+                p.assign_doubt(None) #ダウトされる側はダウトしない.
 
         #detect
         n = 0
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect(players)
+                p.detect()
 
         for p in players:
             d.pay(c, p)
@@ -677,17 +677,17 @@ class testOfPlayer(unittest.TestCase):
         p4.assign_call(c.num, 1) #外し,降りる.
 
         #ダウトの入力.
-        p1.assign_doubt(3)
-        p2.assign_doubt(3)
-        p3.assign_doubt(0)
-        p4.assign_doubt(3)
+        p1.assign_doubt(p3)
+        p2.assign_doubt(p3)
+        p3.assign_doubt(None)
+        p4.assign_doubt(p3)
 
         d.delete_overlap_doubt(players)
 
         #detect
         for p in players:
-            if main.linkId(p.doubt, players) != None:
-                p.detect(players)
+            if p.doubt != None:
+                p.detect()
 
         for p in players:
             d.pay(c, p)
@@ -715,7 +715,7 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        self.assertEqual(False, d.checkDuel(players, higher, lower))
+        self.assertEqual(False, d.checkDuel(higher, lower))
 
         #デュエル成功パターン
         p1.money = 2000
@@ -725,7 +725,7 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.checkDuel(players, higher, lower) == True:
+        if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 0
             higher.duel(c, lower)
@@ -743,7 +743,7 @@ class testOfPlayer(unittest.TestCase):
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
-        if d.checkDuel(players, higher, lower) == True:
+        if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 1
             higher.duel(c, lower)

@@ -45,12 +45,13 @@ class Dealer:
 
         count = 0
         for doubter in players:
-            count += doubter.doubt
+            if doubter.doubt != None:
+                count += 1
         if count == 0: #count == 0 → 誰もダウトをしていない.
             print('ダウトしたプレイヤーはいませんでした.')
 
         for doubter in players:
-            doubted = main.linkId(doubter.doubt, players)
+            doubted = doubter.doubt
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
 
@@ -61,19 +62,19 @@ class Dealer:
         for p in players:
             doubters = [] #自分を疑っているプレイヤー.
             for doubter in players:
-                doubted = main.linkId(doubter.doubt, players)
+                doubted = doubter.doubt
                 if doubted == p: #もし自分を疑っている場合
                     doubters.append(doubter)
 
             lowest = None
             minimum = float('inf') #無限
             for doubter in doubters:
-                doubter.doubt = 0 #一旦全員のダウトを0にする.
+                doubter.doubt = None #一旦全員のダウトを0にする.
                 if doubter.money < minimum: #所持金の低いプレイヤーが優先.
                     lowest = doubter
                     minimum = doubter.money
             if lowest != None: #最も所持金の低いプレイヤーのみがダウトできる.
-                lowest.doubt = p.playerNo
+                lowest.doubt = p
 
     def pay(self, c, player):
         """
@@ -114,12 +115,12 @@ class Dealer:
                 lower = p
         return lower
 
-    def checkDuel(self, players, higher, lower):
+    def checkDuel(self, higher, lower):
         """
-        デュエルが発生するか確認する関数.
+        デュエルが行われるか確認する関数.
         """
         if higher.money >= lower.money*5: #所持金の差が5倍以上ならTrueを返す.
-            higher.target = main.linkId(lower.playerNo, players)
+            higher.target = lower
             return True
         else:
             return False
