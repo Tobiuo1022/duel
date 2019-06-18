@@ -4,7 +4,7 @@ class Player:
     playerNo = 0 #プレイヤーの番号.
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
-    counter = 0 #カウンターの値
+    counter = 2000 #カウンターの値
     mode = None #選択したモード
     predict = 0 #予想した面.
     bet = 0 #賭け金
@@ -20,7 +20,7 @@ class Player:
         """
         モードを標準入力する関数.
         """
-        choices = ['ブラフ', 'カウンター', 'ダブルアップ']
+        choices = ['b', 'c', 'd']
         print('モードを選択してください.', end='')
         print_choices(choices)
         mode = answer(choices) #入力
@@ -36,7 +36,7 @@ class Player:
         """
         コイントスの予想を標準入力する関数.
         """
-        choices = ['表', '裏']
+        choices = ['f', 'b']
         print('どちらに賭けますか？', end='')
         print_choices(choices)
         predict = answer(choices) #入力
@@ -95,7 +95,7 @@ class Player:
         返り値 :
             call : コールなら0,フォールドなら1が入る.
         """
-        choices = ['Call', 'Fold']
+        choices = ['c', 'f']
         if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
             print('予想が的中しました.', end='')
         else:
@@ -139,10 +139,11 @@ class Player:
         choices = []
         for p in players:
             choices.append(p.name)
-        choices.append('ダウトしない')
+        choices.append('n')
         print('どのプレイヤーをダウトしますか？', end='')
         print_choices(choices)
         ans = answer(choices) #入力
+        doubt = None
         if ans == len(choices)-1:
             print('ダウトしません.')
         else:
@@ -219,9 +220,15 @@ class Player:
         カウンターは更新する.
         """
         if self.isCall == False:
-            self.counter = int(self.bet/2)
+            if self.mode == 1 #カウンターでフォールドした場合,若干カウンターが増える.
+                decrease = int(self.counter/4)
+                self.counter -= decrease
+                self.counter += int(self.bet/2)
+            else:
+                self.counter = self.bet
         else:
-            self.counter = int(self.counter/2)
+            decrease = int(self.counter/4) #ラウンド毎に4分の1減少.
+            self.counter -= decrease
         self.mode = None
         self.predict = 0
         self.bet = 0
