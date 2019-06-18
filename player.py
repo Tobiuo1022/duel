@@ -220,7 +220,7 @@ class Player:
         カウンターは更新する.
         """
         if self.isCall == False:
-            if self.mode == 1 #カウンターでフォールドした場合,若干カウンターが増える.
+            if self.mode == 1: #カウンターでフォールドした場合,若干カウンターが増える.
                 decrease = int(self.counter/4)
                 self.counter -= decrease
                 self.counter += int(self.bet/2)
