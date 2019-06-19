@@ -820,5 +820,35 @@ class testOfPlayer(unittest.TestCase):
 
         self.assertEqual(jp.money, 6000)
 
+    def test_jackpot(self):
+        """
+        ジャックポットが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        jp = jackpot.Jackpot()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
+
+        jp.money = 10000
+
+        p1.payRatio = 0
+        p2.payRatio = 1
+        p3.payRatio = 2
+        p4.payRatio = 3
+
+        jp.payJP(players)
+
+        self.assertEqual(p1.money, 10000)
+        self.assertEqual(p2.money, 11666)
+        self.assertEqual(p3.money, 13333)
+        self.assertEqual(p4.money, 15000)
+
+        self.assertEqual(jp.money, 1)
+
 if __name__ == '__main__':
     unittest.main()

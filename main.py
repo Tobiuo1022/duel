@@ -7,6 +7,8 @@ def play(d, players):
         if nextRound == True:
             round += 1
             print('\n-- '+ str(round) +'Round --') #ラウンド数.
+        else:
+            jackpotTime(jp, d, players) #ジャックポットタイム.
 
         d.announce_jp(jp) #ジャックポットの金額を公表.
         print('')
@@ -85,13 +87,13 @@ def detectPhase(jp, players):
             pleaseEnter(1)
 
 def payPhase(c, jp, d, players):
-    print('\n-- PayPhase --') #ペイフェイズ
+    print('\n-- PayPhase --')
     for p in players:
         d.pay(c, jp, p)
     pleaseEnter(1)
 
 def duelPhase(c, jp, higher, lower):
-    print('\n-- DuelPhase --') #デュエルフェイズ
+    print('\n-- DuelPhase --')
     print(higher.name +'さんが'+ lower.name +'さんへデュエルを行います.')
 
     print(higher.name +'さん.')
@@ -105,6 +107,22 @@ def duelPhase(c, jp, higher, lower):
     higher.duel(c, jp, lower)
     pleaseEnter(1)
     print('')
+
+def jackpotTime(jp, d, players):
+    print('\n-- JackPotTime --')
+    d.announce_jp(jp)
+    for p in players: #ジャックポットの配当の割合を決定.
+        p.yourTurn()
+        p.challenge(c)
+    pleaseEnter()
+    print('')
+
+    jp.payJP(players) #ジャックポットの配当.
+    pleaseEnter()
+    print('')
+
+    for p in players:
+        p.payRtio = 0
 
 def pleaseEnter(num):
         """

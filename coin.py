@@ -28,8 +28,8 @@ class Coin:
     ディーラーがコイントスする際に使うコインと,
     プレイヤーがコイントスの結果を予想するときに使うコインの両方で使う.
     """
-    face = '表' #表裏を示す.
     num = 0 #表裏を示す.0は表,1は裏に対応している.
+    face = '表' #表裏を示す.
 
     def __init__(self):
         self.num = 0
@@ -45,6 +45,24 @@ class Coin:
         self.num = random.randint(0, 1) #0か1の値を取る.
         self.face = conversion(self.num)
         print(self.face +'が出ました.')
+
+    def toss3(self):
+        """
+        ジャックポットタイム用のコイントスをする関数.
+        3回のコイントスの結果を返す.
+        """
+        result = []  #コイントスの結果.
+        print('コイントス中…')
+        time.sleep(2)
+        print('\u001b[1A\u001b[0J', end='')
+        for n in range(3):
+            self.num = random.randint(0, 1) #0か1の値を取る.
+            result.append(self.num)
+            self.face = conversion(self.num)
+            print(self.face +' ', end='')
+        print('が出ました.')
+
+        return result
 
 def conversion(num):
     """

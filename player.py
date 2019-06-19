@@ -11,6 +11,7 @@ class Player:
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = None #ダウト先のプレイヤー.
+    payRatio = 0 #ジャックポットの配当の割合.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
@@ -214,6 +215,12 @@ class Player:
             jp.money += penalty #損失額がジャックポットへ流れる.
             print('予想が外れました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
         self.predict = 0
+
+    def challenge(self, c):
+        result = c.toss3()
+        for num in result:
+            if num == 0:
+                self.payRatio += 1
 
     def updateValue(self):
         """
