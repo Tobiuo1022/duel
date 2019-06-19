@@ -2,27 +2,34 @@ def play(d, players):
     print('\nゲームを開始します.')
     pleaseEnter(1)
     round = 0
-    nextRound = True #ペイフェイズとデュエルフェイズのどちらから戻ってきたのかの判定.
     while d.checkFinish(players) == False: #ゲームが終了するかの判定.
-        if nextRound == True:
-            round += 1
-            print('\n-- '+ str(round) +'Round --') #ラウンド数.
-        else:
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
+            print('')
+            d.announce_jp(jp) #ジャックポットの金額を公表.
+            print('')
+            d.announce_state(players) #各プレイヤーの所持金を公表.
+            pleaseEnter(1)
+
+            duelPhase(c, jp, higher, lower) #デュエルフェイズ.
+            if d.checkFinish(players) == True: #higherが勝てばゲーム終了.
+                break
+            d.announce_jp(jp) #ジャックポットの金額を公表.
+            print('')
+            d.announce_state(players) #各プレイヤーの所持金を公表.
+            pleaseEnter(1)    
             jackpotTime(jp, d, players) #ジャックポットタイム.
+            continue
+
+        round += 1
+        print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
         d.announce_jp(jp) #ジャックポットの金額を公表.
         print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
-
-        higher = d.return_higher(players)
-        lower = d.return_lower(players)
-        if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
-            duelPhase(c, jp, higher, lower) #デュエルフェイズ.
-            nextRound = False
-            continue
-        else:
-            nextRound = True
 
         betPhase(players) #ベットフェイズ
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
@@ -114,11 +121,11 @@ def jackpotTime(jp, d, players):
     for p in players: #ジャックポットの配当の割合を決定.
         p.yourTurn()
         p.challenge(c)
-    pleaseEnter()
+    pleaseEnter(1)
     print('')
 
     jp.payJP(players) #ジャックポットの配当.
-    pleaseEnter()
+    pleaseEnter(1)
     print('')
 
     for p in players:
