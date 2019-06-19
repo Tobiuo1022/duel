@@ -200,21 +200,35 @@ class Player:
         self.money += self.counter
         print('さらにカウンターにより'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
 
-    def duel(self, c, jp, lower):
+    def duel(self, c, jp):
         """
         デュエルを行う関数.
         """
-        if self.predict == c.num:
-            penalty = int(self.money/5)
-            lower.money -= penalty
-            jp.money += penalty #損失額がジャックポットへ流れる.
-            print('予想が的中しました.'+ str(penalty) +'円が'+ lower.name +'から没収されます.')
-        else:
+        if c.num == 0: #デュエルの実行に成功.
+            success = True
+            print('デュエルの実行に成功しました.')
+        else: #デュエルの実行に失敗.
             penalty = int(self.money/2)
             self.money -= penalty
             jp.money += penalty #損失額がジャックポットへ流れる.
-            print('予想が外れました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
-        self.predict = 0
+            print('デュエルの実行に失敗しました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
+            success = False
+        return success
+
+    def defense(self, c, jp, higher):
+        """
+        デュエルから防衛する関数.
+        """
+        if c.num == 0: #デュエルの防衛に成功.
+            penalty = int(higher.money/2)
+            higher.money -= penalty
+            jp.money += penalty #損失額がジャックポットへ流れる.
+            print('防衛に成功しました.'+ str(penalty) +'円が'+ higher.name +'から没収されます.')
+        else: #デュエルの防衛に失敗.
+            penalty = int(higher.money/5)
+            self.money -= penalty
+            jp.money += penalty #損失額がジャックポットへ流れる.
+            print('防衛に失敗しました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
 
     def challenge(self, c):
         result = c.toss3()

@@ -774,7 +774,9 @@ class testOfPlayer(unittest.TestCase):
         if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 0
-            higher.duel(c, jp, lower)
+            if higher.duel(c, jp) == True:
+                c.num = 1
+                lower.defense(c, jp, higher)
 
         self.assertEqual(p1.money, -400)
         self.assertEqual(p2.money, 5000)
@@ -811,7 +813,9 @@ class testOfPlayer(unittest.TestCase):
         if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 1
-            higher.duel(c, jp, lower)
+            if higher.duel(c, jp) == True:
+                c.num = 0
+                lower.defense(c, jp, higher)
 
         self.assertEqual(p1.money, 2000)
         self.assertEqual(p2.money, 5000)

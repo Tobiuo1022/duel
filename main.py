@@ -19,7 +19,7 @@ def play(d, players):
             d.announce_jp(jp) #ジャックポットの金額を公表.
             print('')
             d.announce_state(players) #各プレイヤーの所持金を公表.
-            pleaseEnter(1)    
+            pleaseEnter(1)
             jackpotTime(jp, d, players) #ジャックポットタイム.
             continue
 
@@ -105,15 +105,18 @@ def duelPhase(c, jp, higher, lower):
 
     print(higher.name +'さん.')
     pleaseEnter(1)
-    higher.assign_predict(higher.input_predict())
-
     c.toss()
+    success = higher.duel(c, jp) #攻撃側のコイントス.
     pleaseEnter(1)
     print('')
 
-    higher.duel(c, jp, lower)
-    pleaseEnter(1)
-    print('')
+    if success == True:
+        print(lower.name +'さん.')
+        pleaseEnter(1)
+        c.toss()
+        lower.defense(c, jp, higher) #防衛側のコイントス.
+        pleaseEnter(1)
+        print('')
 
 def jackpotTime(jp, d, players):
     print('\n-- JackPotTime --')
@@ -126,10 +129,9 @@ def jackpotTime(jp, d, players):
 
     jp.payJP(players) #ジャックポットの配当.
     pleaseEnter(1)
-    print('')
 
     for p in players:
-        p.payRtio = 0
+        p.payRatio = 0
 
 def pleaseEnter(num):
         """
