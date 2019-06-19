@@ -1,5 +1,5 @@
 import unittest
-import main, coin, dealer, player
+import main, coin, jackpot, dealer, player
 
 class testOfPlayer(unittest.TestCase):
 
@@ -12,12 +12,15 @@ class testOfPlayer(unittest.TestCase):
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん')
         p2 = player.Player(2, '2さん')
         p3 = player.Player(3, '3さん')
         p4 = player.Player(4, '4さん')
         players = [p1, p2, p3, p4]
+
+        self.assertEqual(jp.money, 0)
 
         self.assertEqual(p1.money, 10000)
         self.assertEqual(p1.counter, 0)
@@ -77,7 +80,7 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p4.predict, 1)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -85,11 +88,13 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p1.money, 10100)
         self.assertEqual(p1.counter, 0)
         self.assertEqual(p2.money, 9900)
-        self.assertEqual(p2.counter, 50)
+        self.assertEqual(p2.counter, 100)
         self.assertEqual(p3.money, 10100)
         self.assertEqual(p3.counter, 0)
         self.assertEqual(p4.money, 9900)
-        self.assertEqual(p4.counter, 50)
+        self.assertEqual(p4.counter, 100)
+
+        self.assertEqual(jp.money, 200)
 
     def test_call_counter(self):
         """
@@ -97,12 +102,15 @@ class testOfPlayer(unittest.TestCase):
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん')
         p2 = player.Player(2, '2さん')
         p3 = player.Player(3, '3さん')
         p4 = player.Player(4, '4さん')
         players = [p1, p2, p3, p4]
+
+        self.assertEqual(jp.money, 0)
 
         self.assertEqual(p1.money, 10000)
         self.assertEqual(p1.counter, 0)
@@ -112,6 +120,9 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p1.counter, 0)
         self.assertEqual(p1.money, 10000)
         self.assertEqual(p1.counter, 0)
+
+        for p in players:
+            p.counter = 300
 
         #モードの代入.
         for p in players:
@@ -162,32 +173,37 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p4.predict, 1)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
 
         self.assertEqual(p1.money, 10100)
-        self.assertEqual(p1.counter, 0)
+        self.assertEqual(p1.counter, 225)
         self.assertEqual(p2.money, 9900)
-        self.assertEqual(p2.counter, 50)
+        self.assertEqual(p2.counter, 250)
         self.assertEqual(p3.money, 10100)
-        self.assertEqual(p3.counter, 0)
+        self.assertEqual(p3.counter, 225)
         self.assertEqual(p4.money, 9900)
-        self.assertEqual(p4.counter, 50)
+        self.assertEqual(p4.counter, 250)
 
-    def test_call_doubleUp(self):
+        self.assertEqual(jp.money, 200)
+
+    def test_call_tripleUp(self):
         """
-        ダブルアップモードにおいてコールとフォールドが正常に行われるかテストする関数.
+        トリプルアップモードにおいてコールとフォールドが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん')
         p2 = player.Player(2, '2さん')
         p3 = player.Player(3, '3さん')
         p4 = player.Player(4, '4さん')
         players = [p1, p2, p3, p4]
+
+        self.assertEqual(jp.money, 0)
 
         self.assertEqual(p1.money, 10000)
         self.assertEqual(p1.counter, 0)
@@ -247,7 +263,7 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p4.predict, 1)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -255,11 +271,13 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p1.money, 10100)
         self.assertEqual(p1.counter, 0)
         self.assertEqual(p2.money, 9900)
-        self.assertEqual(p2.counter, 50)
-        self.assertEqual(p3.money, 10300) #ダブルアップによって4倍.
+        self.assertEqual(p2.counter, 100)
+        self.assertEqual(p3.money, 10500) #トリプルアップによって6倍.
         self.assertEqual(p3.counter, 0)
         self.assertEqual(p4.money, 9900)
-        self.assertEqual(p4.counter, 50)
+        self.assertEqual(p4.counter, 100)
+
+        self.assertEqual(jp.money, 200)
 
     def test_doubt_bluff(self):
         """
@@ -267,6 +285,7 @@ class testOfPlayer(unittest.TestCase):
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん') #奇数組はダウト係.
         p2 = player.Player(2, '2さん') #ブラフ,的中,コール.
@@ -285,14 +304,17 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
+
+        for p in players:
+            p.counter = 300
 
         #モードの代入.
         n = 0
@@ -304,7 +326,7 @@ class testOfPlayer(unittest.TestCase):
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #ダブルアップモード.
+            elif n <= 24: #トリプルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
@@ -346,10 +368,10 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect()
+                p.detect(jp)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -362,14 +384,14 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p6.money, 9850)
         self.assertEqual(p7.money, 10050)
         self.assertEqual(p8.money, 9900)
-        self.assertEqual(p9.money, 10050)
-        self.assertEqual(p10.money, 10100)
+        self.assertEqual(p9.money, 9750)
+        self.assertEqual(p10.money, 10400)
         self.assertEqual(p11.money, 10200)
         self.assertEqual(p12.money, 10000)
         self.assertEqual(p13.money, 10200)
         self.assertEqual(p14.money, 9800)
-        self.assertEqual(p15.money, 10050)
-        self.assertEqual(p16.money, 9900)
+        self.assertEqual(p15.money, 9750)
+        self.assertEqual(p16.money, 10200)
         self.assertEqual(p17.money, 10050)
         self.assertEqual(p18.money, 10100)
         self.assertEqual(p19.money, 10300)
@@ -382,10 +404,14 @@ class testOfPlayer(unittest.TestCase):
         n = 0
         for p in players:
             n += 1
-            if n%4 == 0:
-                self.assertEqual(p.counter, 50)
+            if n == 12 or n == 16:
+                self.assertEqual(p.counter, 250) #カウンターモードでのフォールド.
+            elif n%4 == 0:
+                self.assertEqual(p.counter, 100) #フォールド.
             else:
-                self.assertEqual(p.counter, 0)
+                self.assertEqual(p.counter, 225) #コール.
+
+        self.assertEqual(jp.money, 900)
 
     def test_doubt_counter(self):
         """
@@ -393,6 +419,7 @@ class testOfPlayer(unittest.TestCase):
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん') #奇数組はダウト係.
         p2 = player.Player(2, '2さん') #ブラフ,的中,コール.
@@ -411,14 +438,17 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
+
+        for p in players:
+            p.counter = 300
 
         #モードの代入.
         n = 0
@@ -430,7 +460,7 @@ class testOfPlayer(unittest.TestCase):
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #ダブルアップモード.
+            elif n <= 24: #トリプルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
@@ -472,10 +502,10 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect()
+                p.detect(jp)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -488,14 +518,14 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p6.money, 9850)
         self.assertEqual(p7.money, 10000)
         self.assertEqual(p8.money, 9900)
-        self.assertEqual(p9.money, 10000)
-        self.assertEqual(p10.money, 10100)
+        self.assertEqual(p9.money, 9700)
+        self.assertEqual(p10.money, 10400)
         self.assertEqual(p11.money, 10200)
         self.assertEqual(p12.money, 10000)
         self.assertEqual(p13.money, 10200)
         self.assertEqual(p14.money, 9800)
-        self.assertEqual(p15.money, 10000)
-        self.assertEqual(p16.money, 9900)
+        self.assertEqual(p15.money, 9700)
+        self.assertEqual(p16.money, 10200)
         self.assertEqual(p17.money, 10000)
         self.assertEqual(p18.money, 10100)
         self.assertEqual(p19.money, 10200)
@@ -508,17 +538,22 @@ class testOfPlayer(unittest.TestCase):
         n = 0
         for p in players:
             n += 1
-            if n%4 == 0:
-                self.assertEqual(p.counter, 50)
+            if n == 12 or n == 16:
+                self.assertEqual(p.counter, 250) #カウンターモードでのフォールド.
+            elif n%4 == 0:
+                self.assertEqual(p.counter, 100) #フォールド.
             else:
-                self.assertEqual(p.counter, 0)
+                self.assertEqual(p.counter, 225) #コール.
 
-    def test_doubt_doubleUp(self):
+        self.assertEqual(jp.money, 1200)
+
+    def test_doubt_tripleUp(self):
         """
-        ダブルアップモードにおいてダウトが正常に行われるかテストする関数.
+        トリプルアップモードにおいてダウトが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん') #奇数組はダウト係.
         p2 = player.Player(2, '2さん') #ブラフ,的中,コール.
@@ -537,26 +572,29 @@ class testOfPlayer(unittest.TestCase):
         p15 = player.Player(15, '15さん')
         p16 = player.Player(16, '16さん') #カウンター,外れ,フォールド.
         p17 = player.Player(17, '17さん')
-        p18 = player.Player(18, '18さん') #ダブルアップ,的中,コール.
+        p18 = player.Player(18, '18さん') #トリプルアップ,的中,コール.
         p19 = player.Player(19, '19さん')
-        p20 = player.Player(20, '20さん') #ダブルアップ,的中,フォールド.
+        p20 = player.Player(20, '20さん') #トリプルアップ,的中,フォールド.
         p21 = player.Player(21, '21さん')
-        p22 = player.Player(22, '22さん') #ダブルアップ,外れ,コール.
+        p22 = player.Player(22, '22さん') #トリプルアップ,外れ,コール.
         p23 = player.Player(23, '23さん')
-        p24 = player.Player(24, '24さん') #ダブルアップ,外れ,フォールド.
+        p24 = player.Player(24, '24さん') #トリプルアップ,外れ,フォールド.
         players = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24]
+
+        for p in players:
+            p.counter = 300
 
         #モードの代入.
         n = 0
         for p in players:
             n += 1
-            if n%2 == 1: #奇数組はダブルアップモード.
+            if n%2 == 1: #奇数組はトリプルアップモード.
                 p.assign_mode(2)
             elif n <= 8: #ブラフモード.
                 p.assign_mode(0)
             elif n <= 16: #カウンターモード.
                 p.assign_mode(1)
-            elif n <= 24: #ダブルアップモード.
+            elif n <= 24: #トリプルアップモード.
                 p.assign_mode(2)
 
         #賭け金の代入.
@@ -598,10 +636,10 @@ class testOfPlayer(unittest.TestCase):
         for p in players:
             n += 1
             if n%2 == 1:
-                p.detect()
+                p.detect(jp)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -614,14 +652,14 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p6.money, 9850)
         self.assertEqual(p7.money, 10000)
         self.assertEqual(p8.money, 9900)
-        self.assertEqual(p9.money, 10000)
-        self.assertEqual(p10.money, 10100)
+        self.assertEqual(p9.money, 9700)
+        self.assertEqual(p10.money, 10400)
         self.assertEqual(p11.money, 10200)
         self.assertEqual(p12.money, 10000)
         self.assertEqual(p13.money, 10200)
         self.assertEqual(p14.money, 9800)
-        self.assertEqual(p15.money, 10000)
-        self.assertEqual(p16.money, 9900)
+        self.assertEqual(p15.money, 9700)
+        self.assertEqual(p16.money, 10200)
         self.assertEqual(p17.money, 10000)
         self.assertEqual(p18.money, 10100)
         self.assertEqual(p19.money, 10200)
@@ -634,10 +672,14 @@ class testOfPlayer(unittest.TestCase):
         n = 0
         for p in players:
             n += 1
-            if n%4 == 0:
-                self.assertEqual(p.counter, 50)
+            if n == 12 or n == 16:
+                self.assertEqual(p.counter, 250) #カウンターモードでのフォールド.
+            elif n%4 == 0:
+                self.assertEqual(p.counter, 100) #フォールド.
             else:
-                self.assertEqual(p.counter, 0)
+                self.assertEqual(p.counter, 225) #コール.
+
+        self.assertEqual(jp.money, 1200)
 
     def test_overlap_doubt(self):
         """
@@ -645,6 +687,7 @@ class testOfPlayer(unittest.TestCase):
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん')
         p2 = player.Player(2, '2さん')
@@ -687,10 +730,10 @@ class testOfPlayer(unittest.TestCase):
         #detect
         for p in players:
             if p.doubt != None:
-                p.detect()
+                p.detect(jp)
 
         for p in players:
-            d.pay(c, p)
+            d.pay(c, jp, p)
 
         for p in players:
             p.updateValue()
@@ -700,12 +743,15 @@ class testOfPlayer(unittest.TestCase):
         self.assertEqual(p3.money, 9550)
         self.assertEqual(p4.money, 9900)
 
-    def test_duel(self):
+        self.assertEqual(jp.money, 900)
+
+    def test_duel_success(self):
         """
-        条件を満たした際,デュエルが正常に行われるかテストする関数.
+        デュエル成功時,デュエルが正常に行われるかテストする関数.
         """
         #プレイヤーのエントリー.
         c = coin.Coin()
+        jp = jackpot.Jackpot()
         d = dealer.Dealer()
         p1 = player.Player(1, '1さん')
         p2 = player.Player(2, '2さん')
@@ -728,14 +774,33 @@ class testOfPlayer(unittest.TestCase):
         if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 0
-            higher.duel(c, lower)
+            higher.duel(c, jp, lower)
 
         self.assertEqual(p1.money, -400)
         self.assertEqual(p2.money, 5000)
         self.assertEqual(p3.money, 10000)
-        self.assertEqual(p4.money, 14400)
+        self.assertEqual(p4.money, 12000)
 
-        #デュエル失敗パターン
+        self.assertEqual(jp.money, 2400)
+
+    def test_duel_failure(self):
+        """
+        デュエル失敗時,デュエルが正常に行われるかテストする関数.
+        """
+        #プレイヤーのエントリー.
+        c = coin.Coin()
+        jp = jackpot.Jackpot()
+        d = dealer.Dealer()
+        p1 = player.Player(1, '1さん')
+        p2 = player.Player(2, '2さん')
+        p3 = player.Player(3, '3さん')
+        p4 = player.Player(4, '4さん')
+        players = [p1, p2, p3, p4]
+
+        higher = d.return_higher(players)
+        lower = d.return_lower(players)
+        self.assertEqual(False, d.checkDuel(higher, lower))
+
         p1.money = 2000
         p2.money = 5000
         p3.money = 10000
@@ -746,12 +811,14 @@ class testOfPlayer(unittest.TestCase):
         if d.checkDuel(higher, lower) == True:
             higher.assign_predict(0)
             c.num = 1
-            higher.duel(c, lower)
+            higher.duel(c, jp, lower)
 
-        self.assertEqual(p1.money, 8000)
+        self.assertEqual(p1.money, 2000)
         self.assertEqual(p2.money, 5000)
         self.assertEqual(p3.money, 10000)
         self.assertEqual(p4.money, 6000)
+
+        self.assertEqual(jp.money, 6000)
 
 if __name__ == '__main__':
     unittest.main()

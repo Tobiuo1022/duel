@@ -1,10 +1,10 @@
-import coin, main, math
+import main, coin, jackpot, math
 
 class Player:
     playerNo = 0 #プレイヤーの番号.
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
-    counter = 2000 #カウンターの値
+    counter = 0 #カウンターの値
     mode = None #選択したモード
     predict = 0 #予想した面.
     bet = 0 #賭け金
@@ -157,7 +157,7 @@ class Player:
         """
         self.doubt = doubt
 
-    def detect(self):
+    def detect(self, jp):
         """
         指定した相手にダウトを行い,所持金の増減を行う関数.
         linkId()の消去に伴ってリファクタリング予定.
@@ -185,6 +185,7 @@ class Player:
             if self.mode == 0:
                 penalty = int(penalty/2) #ペナルティが半減する.
             self.money -= penalty
+            jp.money += penalty #損失額がジャックポットへ流れる.
             print(self.name +'のダウトは失敗です.')
             print('ダウト失敗のペナルティとして'+ self.name +'さんから'+ str(penalty) +'円を没収します.')
             if doubt.mode == 1:
@@ -198,20 +199,20 @@ class Player:
         self.money += self.counter
         print('さらにカウンターにより'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
 
-    def duel(self, c, lower):
+    def duel(self, c, jp, lower):
         """
         デュエルを行う関数.
         """
         if self.predict == c.num:
-            steal = int(self.money/5)
-            self.money += steal
-            lower.money -= steal
-            print('予想が的中しました.'+ str(steal) +'円が'+ lower.name +'から'+ self.name +'へ移動します.')
+            penalty = int(self.money/5)
+            lower.money -= penalty
+            jp.money += penalty #損失額がジャックポットへ流れる.
+            print('予想が的中しました.'+ str(penalty) +'円が'+ lower.name +'から没収されます.')
         else:
-            steal = int(self.money/2)
-            self.money -= steal
-            lower.money += steal
-            print('予想が外れました.'+ str(steal) +'円が'+ self.name +'から'+ lower.name +'へ移動します.')
+            penalty = int(self.money/2)
+            self.money -= penalty
+            jp.money += penalty #損失額がジャックポットへ流れる.
+            print('予想が外れました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
         self.predict = 0
 
     def updateValue(self):
@@ -220,10 +221,10 @@ class Player:
         カウンターは更新する.
         """
         if self.isCall == False:
-            if self.mode == 1: #カウンターでフォールドした場合,若干カウンターが増える.
-                decrease = int(self.counter/4)
+            if self.mode == 1: #カウンターでフォールドした場合,カウンターの値の半額が保持される.
+                decrease = int(self.counter/2)
                 self.counter -= decrease
-                self.counter += int(self.bet/2)
+                self.counter += self.bet
             else:
                 self.counter = self.bet
         else:
@@ -285,7 +286,7 @@ def linkMode(mode):
     elif mode == 1:
         modeName = 'カウンター'
     elif mode == 2:
-        modeName = 'ダブルアップ'
+        modeName = 'トリプルアップ'
     return modeName
 
 if __name__ == '__main__':

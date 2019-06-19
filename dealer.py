@@ -1,4 +1,4 @@
-import main, coin, player
+import main, coin, jackpot, player
 
 class Dealer:
 
@@ -33,6 +33,9 @@ class Dealer:
 
             p = player.Player(n+1, name)
             players.append(p)
+
+    def announce_jp(self, jp):
+        print('ジャックポット : '+ str(jp.money) +'円')
 
     def announce_state(self, players):
         print('各プレイヤーの所持金とカウンターの値です.')
@@ -93,20 +96,21 @@ class Dealer:
             if lowest != None: #最も所持金の低いプレイヤーのみがダウトできる.
                 lowest.doubt = p
 
-    def pay(self, c, player):
+    def pay(self, c, jp, p):
         """
         お金を清算する関数.
         """
         rate = 2
-        if player.predict == c.num: #予想が的中した場合(嘘含む).
-            if player.mode == 2 and player.isCall == True and player.bluff == 1: #ダブルアップ適用.
-                rate *= 2
-                print('ダブルアップ成功です.', end='')
-            bonus = player.bet*rate #勝利金
-            player.money += bonus
-            print(player.name +'へ'+ str(bonus) +'円をお支払いします.')
+        if p.predict == c.num: #予想が的中した場合(嘘含む).
+            if p.mode == 2 and p.isCall == True and p.bluff == 1: #トリプルアップ適用.
+                rate *= 3
+                print('トリプルアップ成功です.', end='')
+            bonus = p.bet*rate #勝利金
+            p.money += bonus
+            print(p.name +'へ'+ str(bonus) +'円をお支払いします.')
         else:
-            print('残念ですが'+ player.name +'の賭金は没収となります.')
+            jp.money += p.bet #損失額がジャックポットへ流れる.
+            print('残念ですが'+ p.name +'の賭金は没収となります.')
 
     def return_higher(self, players):
         """

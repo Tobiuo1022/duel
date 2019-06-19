@@ -8,13 +8,15 @@ def play(d, players):
             round += 1
             print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
+        d.announce_jp(jp) #ジャックポットの金額を公表.
+        print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
 
         higher = d.return_higher(players)
         lower = d.return_lower(players)
         if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
-            duelPhase(c, higher, lower) #デュエルフェイズ.
+            duelPhase(c, jp, higher, lower) #デュエルフェイズ.
             nextRound = False
             continue
         else:
@@ -41,9 +43,9 @@ def play(d, players):
         d.announce_doubt(players) #各プレイヤーのダウト先を公表.
         pleaseEnter(1)
 
-        detectPhase(players) #ディテクトフェイズ.
+        detectPhase(jp, players) #ディテクトフェイズ.
 
-        payPhase(c, d, players) #ペイフェイズ.
+        payPhase(c, jp, d, players) #ペイフェイズ.
 
         for p in players:
             p.updateValue() #値の更新.
@@ -76,19 +78,19 @@ def doubtPhase(players):
         p.assign_doubt(p.input_doubt(others))
         pleaseEnter(5)
 
-def detectPhase(players):
+def detectPhase(jp, players):
     for p in players:
         if p.doubt != None:
-            p.detect()
+            p.detect(jp)
             pleaseEnter(1)
 
-def payPhase(c, d, players):
+def payPhase(c, jp, d, players):
     print('\n-- PayPhase --') #ペイフェイズ
     for p in players:
-        d.pay(c, p)
+        d.pay(c, jp, p)
     pleaseEnter(1)
 
-def duelPhase(c, higher, lower):
+def duelPhase(c, jp, higher, lower):
     print('\n-- DuelPhase --') #デュエルフェイズ
     print(higher.name +'さんが'+ lower.name +'さんへデュエルを行います.')
 
@@ -100,7 +102,7 @@ def duelPhase(c, higher, lower):
     pleaseEnter(1)
     print('')
 
-    higher.duel(c, lower)
+    higher.duel(c, jp, lower)
     pleaseEnter(1)
     print('')
 
@@ -116,8 +118,9 @@ def pleaseEnter(num):
         print('\u001b[%dA\u001b[0J' % num, end='')
 
 if __name__ == '__main__':
-    import dealer, player, coin, sys
+    import coin, jackpot, dealer, player, sys
     c = coin.Coin()
+    jp = jackpot.Jackpot()
     d = dealer.Dealer()
     players = []
     d.entry(players, d.entry_num())
