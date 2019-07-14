@@ -26,6 +26,11 @@ def play(d, players):
         round += 1
         print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
+        if players[0].hands == []:
+            dealPhase(dc, players)
+            pleaseEnter(1)
+            print('')
+
         d.announce_jp(jp) #ジャックポットの金額を公表.
         print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
@@ -61,6 +66,12 @@ def play(d, players):
 
     d.finishGame(players) #ゲーム終了.
 
+def dealPhase(dc, players):
+    print('手札をお配りします.')
+    dc.shuffle()
+    for p in players:
+        dc.deal_cards(p)
+
 def betPhase(players):
     print('\n-- BetPhase --')
     for p in players:
@@ -76,16 +87,20 @@ def callPhase(c, players):
     for p in players:
         p.yourTurn()
         p.assign_call(c.num, p.input_call(c.num))
-        pleaseEnter(4)
+        pleaseEnter(5)
 
 def doubtPhase(players):
     print('\n-- DoubtPhase --')
     for p in players:
         p.yourTurn()
-        others = players[:] #リストの複製.
-        others.remove(p)
-        p.assign_doubt(p.input_doubt(others))
-        pleaseEnter(5)
+        if p.mode == 'ブラフ':
+            others = players[:] #リストの複製.
+            others.remove(p) #自分以外のプレイヤーのリスト.
+            p.assign_doubt(p.input_doubt(others))
+            pleaseEnter(5)
+        else:
+            print('ブラフモードでないため,このフェイズはパスとなります.')
+            pleaseEnter(3)
 
 def detectPhase(jp, players):
     for p in players:
@@ -145,9 +160,10 @@ def pleaseEnter(num):
         print('\u001b[%dA\u001b[0J' % num, end='')
 
 if __name__ == '__main__':
-    import coin, jackpot, dealer, player, sys
+    import coin, jackpot, deck, dealer, player, sys
     c = coin.Coin()
     jp = jackpot.Jackpot()
+    dc = deck.Deck()
     d = dealer.Dealer()
     players = []
     d.entry(players, d.entry_num())

@@ -57,7 +57,7 @@ class Dealer:
     def announce_mode(self, players):
         print('各プレイヤーのモードを公表します.')
         for p in players:
-            print(str(p.name) +'さん : [モード '+ player.linkMode(p.mode) +']')
+            print(str(p.name) +'さん : [モード '+ p.mode +']')
 
     def announce_doubt(self, players):
         print('ダウトの結果を公表します.')
@@ -102,7 +102,7 @@ class Dealer:
         """
         rate = 2
         if p.predict == c.num: #予想が的中した場合(嘘含む).
-            if p.mode == 2 and p.isCall == True and p.bluff == 1: #トリプルアップ適用.
+            if p.mode == 'トリプルアップ' and p.isCall == True and p.bluff == 1: #トリプルアップ適用.
                 rate *= 3
                 print('トリプルアップ成功です.', end='')
             bonus = p.bet*rate #勝利金

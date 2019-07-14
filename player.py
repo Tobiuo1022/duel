@@ -5,8 +5,10 @@ class Player:
     name = '' #プレイヤーの名前.
     money = 10000 #所持金.
     counter = 0 #カウンターの値
+    hands = [] #モードの手札.
     mode = None #選択したモード
     predict = 0 #予想した面.
+    bet_choices = [] #賭け金の選択肢.
     bet = 0 #賭け金
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
@@ -16,15 +18,18 @@ class Player:
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
         self.name = name
+        self.bet_choices = ['5%', '10%', '15%', '20%', '30%']
+        self.hands = []
 
     def input_mode(self):
         """
         モードを標準入力する関数.
         """
-        choices = ['b', 'c', 'd']
+        choices = self.hands
         print('モードを選択してください.', end='')
         print_choices(choices)
-        mode = answer(choices) #入力
+        ans = select(choices) #入力
+        mode = self.hands.pop(ans-1)
         return mode
 
     def assign_mode(self, mode):
@@ -37,10 +42,10 @@ class Player:
         """
         コイントスの予想を標準入力する関数.
         """
-        choices = ['f', 'b']
+        choices = ['表', '裏']
         print('どちらに賭けますか？', end='')
         print_choices(choices)
-        predict = answer(choices) #入力
+        predict = select(choices)-1 #入力
         return predict
 
     def assign_predict(self, predict):
@@ -51,40 +56,38 @@ class Player:
 
     def input_bet(self):
         """
-        賭け金を標準入力する関数.
+        賭け金を選択する関数.
         """
-        limmit = math.ceil(self.money/3) #賭け金の上限額.所持金の3分の1.小数点は切り上げ.
-        print('いくら賭けますか？', end='')
-        while True:
-            print('(現在の所持金'+ str(self.money) +'円)(上限'+ str(limmit) +'円)')
-            try:
-                ans = int(input())
-            except ValueError: #int型以外を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('int型で入力してください.', end='')
-                continue
-            if 0 < ans and ans <= limmit:
-                break
-            elif ans <= 0: #0以下を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('それでは賭けになりません.', end='')
-            else: #所持金を超えた額を入力された場合.
-                print('\u001b[2A\u001b[0J', end='')
-                print('賭け金が上限を超えています.', end='')
-        return ans
+        choices = self.bet_choices
+        print('賭ける金額を選択してください.', end='')
+        print_choices(choices)
+        ans = select(choices) #入力
+        choice = self.bet_choices.pop(ans-1)
+        return choice
 
-    def assign_bet(self, bet):
+    def assign_bet(self, choice):
         """
         賭け金を代入する関数.
         """
-        self.bet = bet
-        self.money -= bet
+        bet_rate = 0
+        if choice == '5%':
+            bet_rate = 0.05
+        elif choice == '10%':
+            bet_rate = 0.10
+        elif choice == '15%':
+            bet_rate = 0.15
+        elif choice == '20%':
+            bet_rate = 0.20
+        else:
+            bet_rate = 0.30
+        self.bet = int(self.money * bet_rate)
+        self.money -= self.bet
 
     def print_bet(self):
         """
         ベットの内容をプリントする関数.
         """
-        print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
+        print(self.mode +'モードで'+ coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
 
     def input_call(self, c_num):
         """
@@ -96,13 +99,15 @@ class Player:
         返り値 :
             call : コールなら0,フォールドなら1が入る.
         """
-        choices = ['c', 'f']
+        print('あなたの予想 : '+ coin.conversion(self.predict) +' ', end='')
+        choices = ['Call', 'Fold']
         if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
-            print('予想が的中しました.', end='')
+            print('予想が的中しました.')
         else:
-            print('予想が外れました.', end='')
+            print('予想が外れました.')
+        print('コールしますか?', end='')
         print_choices(choices)
-        call = answer(choices) #入力
+        call = select(choices)-1 #入力
         return call
 
     def assign_call(self, c_num, call):
@@ -143,12 +148,12 @@ class Player:
         choices.append('n')
         print('どのプレイヤーをダウトしますか？', end='')
         print_choices(choices)
-        ans = answer(choices) #入力
+        ans = select(choices) #入力
         doubt = None
-        if ans == len(choices)-1:
+        if ans == len(choices):
             print('ダウトしません.')
         else:
-            doubt = players[ans]
+            doubt = players[ans-1]
             print(doubt.name +'さんをダウトします.')
         return doubt
 
@@ -161,44 +166,37 @@ class Player:
     def detect(self, jp):
         """
         指定した相手にダウトを行い,所持金の増減を行う関数.
-        linkId()の消去に伴ってリファクタリング予定.
         """
         doubt = self.doubt
         doubt.predict -= doubt.bluff #doubt.predictを本来の結果に戻す.
         print('\n'+ doubt.name +'が賭けた面は'+ coin.conversion(doubt.predict)+'でした.')
 
-        bonus = doubt.bet
-        penalty = doubt.bet
         if doubt.bluff == 1: #ダウト成功.
-            if self.mode == 0 and doubt.mode == 2: #奪う額が2倍になる.
-                bonus *= 2
-                penalty *= 2
-            if doubt.mode == 0: #ペナルティが半減.
-                penalty = int(penalty/2);
-            self.money += bonus
-            doubt.money -= penalty;
+            steal = doubt.bet
+            if self.mode == 'ブラフ' and doubt.mode == 'トリプルアップ': #奪う額が2倍になる.
+                steal *= 2
+            self.money += steal
+            doubt.money -= steal
 
             print(self.name +'のダウトは成功です.')
-            print('ダウト成功のボーナスとして'+ self.name +'さんへ'+ str(bonus) +'円をお支払いします.')
-            print('ブラフ失敗のペナルティとして'+ doubt.name +'さんから'+ str(penalty) +'円を没収します.')
+            print(str(steal) +'円が'+ doubt.name +'から'+ self.name +'へ移動します.')
 
         else: #ダウト失敗.
-            if self.mode == 0:
-                penalty = int(penalty/2) #ペナルティが半減する.
-            self.money -= penalty
-            jp.money += penalty #損失額がジャックポットへ流れる.
             print(self.name +'のダウトは失敗です.')
-            print('ダウト失敗のペナルティとして'+ self.name +'さんから'+ str(penalty) +'円を没収します.')
-            if doubt.mode == 1:
+            if doubt.mode == 'カウンター':
                 doubt.counterAttack(self)
 
     def counterAttack(self, doubter):
         """
         カウンターを実行する関数.
         """
-        doubter.money -= self.counter
+        steal = self.bet
+        self.money += steal
+        doubter.money -= steal
         self.money += self.counter
-        print('さらにカウンターにより'+ str(self.counter) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
+        self.counter = 0
+        print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
+        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ self.counter +'円をお支払いします.')
 
     def duel(self, c, jp):
         """
@@ -242,15 +240,15 @@ class Player:
         カウンターは更新する.
         """
         if self.isCall == False:
-            if self.mode == 1: #カウンターでフォールドした場合,カウンターの値の半額が保持される.
-                decrease = int(self.counter/2)
-                self.counter -= decrease
+            if self.mode == 'カウンター': #カウンターでフォールドした場合,カウンターの値が保持される.
                 self.counter += self.bet
             else:
                 self.counter = self.bet
         else:
             decrease = int(self.counter/4) #ラウンド毎に4分の1減少.
             self.counter -= decrease
+        if self.bet_choices == []:
+            self.bet_choices = ['5%', '10%', '15%', '20%', '30%']
         self.mode = None
         self.predict = 0
         self.bet = 0
@@ -262,7 +260,7 @@ class Player:
         print(str(self.name) +'さんのターンです.')
         main.pleaseEnter(1)
 
-def answer(choices):
+def select(choices):
     """
     標準入力で選択肢を選ぶ関数.
 
@@ -270,45 +268,37 @@ def answer(choices):
         choices : 選択肢のリスト.str型.
 
     返り値 :
-        ans : choicesのインデックスが返る.
+        ans : 選択した選択肢の番号が返る.
     """
-    ans = None
-    while True: #ちゃんとした入力がされるまで永遠に質問する.
-        str = input()
-        n = 0
-        for choice in choices:
-            if str == choice:
-                ans = n
-                return ans
-            else:
-                n += 1
-        print('\u001b[2A\u001b[0J', end='')
-        print('もう一度入力してください.', end='')
-        print_choices(choices)
+    limmit = len(choices)
+    while True:
+        try:
+            ans = int(input())
+        except ValueError: #int型以外を入力された場合.
+            print('\u001b[2A\u001b[0J', end='')
+            print('int型で入力してください.', end='')
+            print_choices(choices)
+            continue
+        if 0 < ans and ans <= limmit:
+            break
+        else:
+            print('\u001b[2A\u001b[0J', end='')
+            print('選択肢からお選びください.', end='')
+            print_choices(choices)
+    return ans
 
 def print_choices(choices):
     """
     標準入力系の関数で選択肢をプリントする関数.
+    選択文(1:5%, 2:10%, 3:15%, 4:20%, 5:30%)
     """
     print('(', end='')
-    for choice in choices:
-        print(str(choice), end='')
-        if choice != choices[-1]:
+    for n in range(len(choices)):
+        print(str(n+1) +':', end='') #選択番号の表示.
+        print(str(choices[n]), end='') #選択内容の表示.
+        if n != len(choices)-1: #nがchoicesの最終要素でない時.
             print(', ', end='')
     print(')')
-
-def linkMode(mode):
-    """
-    modeの数字をカタカナで返す.変換器.
-    """
-    modeName = None
-    if mode == 0:
-        modeName = 'ブラフ'
-    elif mode == 1:
-        modeName = 'カウンター'
-    elif mode == 2:
-        modeName = 'トリプルアップ'
-    return modeName
 
 if __name__ == '__main__':
     import doctest
