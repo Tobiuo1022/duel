@@ -9,11 +9,10 @@ class Deck:
             self.cards.append(n)
 
     def deal_cards(self, player):
-        for i in range(5): #手札は5枚.
-            rand_num = random.randint(0, len(self.cards)-1)
-            card = self.cards.pop(rand_num) #デッキの中からランダムでカードを一枚引く.
-            hand = linkCard(card)
-            player.hands.append(hand)
+        rand_num = random.randint(0, len(self.cards)-1)
+        card = self.cards.pop(rand_num) #デッキの中からランダムでカードを一枚引く.
+        hand = linkCard(card)
+        player.hands.append(hand)
 
 def linkCard(card):
         """
@@ -21,7 +20,7 @@ def linkCard(card):
         """
         mode = None
         if 0 <= card and card <= 19:
-            mode = 'ブラフ'
+            mode = 'ダウト'
         elif 20 <= card and card <= 39:
             mode = 'カウンター'
         else:

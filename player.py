@@ -18,7 +18,7 @@ class Player:
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
         self.name = name
-        self.bet_choices = ['5%', '10%', '15%', '20%', '30%']
+        self.bet_choices = ['10%', '15%', '20%', '25%', '30%']
         self.hands = []
 
     def input_mode(self):
@@ -70,14 +70,14 @@ class Player:
         賭け金を代入する関数.
         """
         bet_rate = 0
-        if choice == '5%':
-            bet_rate = 0.05
-        elif choice == '10%':
-            bet_rate = 0.10
+        if choice == '10%':
+            bet_rate = 0.1
         elif choice == '15%':
             bet_rate = 0.15
         elif choice == '20%':
-            bet_rate = 0.20
+            bet_rate = 0.2
+        elif choice == '25%':
+            bet_rate = 0.25
         else:
             bet_rate = 0.30
         self.bet = int(self.money * bet_rate)
@@ -173,7 +173,9 @@ class Player:
 
         if doubt.bluff == 1: #ダウト成功.
             steal = doubt.bet
-            if self.mode == 'ブラフ' and doubt.mode == 'トリプルアップ': #奪う額が2倍になる.
+            if doubt.mode == 'ダウト': #奪う額が半減する.
+                steal = int(steal/2)
+            if doubt.mode == 'トリプルアップ': #奪う額が2倍になる.
                 steal *= 2
             self.money += steal
             doubt.money -= steal
@@ -196,7 +198,7 @@ class Player:
         self.money += self.counter
         self.counter = 0
         print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
-        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ self.counter +'円をお支払いします.')
+        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ str(self.counter) +'円をお支払いします.')
 
     def duel(self, c, jp):
         """
@@ -248,7 +250,7 @@ class Player:
             decrease = int(self.counter/4) #ラウンド毎に4分の1減少.
             self.counter -= decrease
         if self.bet_choices == []:
-            self.bet_choices = ['5%', '10%', '15%', '20%', '30%']
+            self.bet_choices = ['10%', '15%', '20%', '25%', '30%']
         self.mode = None
         self.predict = 0
         self.bet = 0

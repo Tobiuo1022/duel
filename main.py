@@ -1,5 +1,6 @@
 def play(d, players):
     print('\nゲームを開始します.')
+    dealPhase(dc, players)
     pleaseEnter(1)
     round = 0
     while d.checkFinish(players) == False: #ゲームが終了するかの判定.
@@ -25,11 +26,6 @@ def play(d, players):
 
         round += 1
         print('\n-- '+ str(round) +'Round --') #ラウンド数.
-
-        if players[0].hands == []:
-            dealPhase(dc, players)
-            pleaseEnter(1)
-            print('')
 
         d.announce_jp(jp) #ジャックポットの金額を公表.
         print('')
@@ -61,16 +57,22 @@ def play(d, players):
 
         payPhase(c, jp, d, players) #ペイフェイズ.
 
+        if len(dc.cards) < len(players):
+            dc.shuffle()
+
+        for p in players:
+            dc.deal_cards(p)
+
         for p in players:
             p.updateValue() #値の更新.
 
     d.finishGame(players) #ゲーム終了.
 
 def dealPhase(dc, players):
-    print('手札をお配りします.')
     dc.shuffle()
     for p in players:
-        dc.deal_cards(p)
+        for i in range(4):
+            dc.deal_cards(p)
 
 def betPhase(players):
     print('\n-- BetPhase --')
@@ -93,13 +95,13 @@ def doubtPhase(players):
     print('\n-- DoubtPhase --')
     for p in players:
         p.yourTurn()
-        if p.mode == 'ブラフ':
+        if p.mode == 'ダウト':
             others = players[:] #リストの複製.
             others.remove(p) #自分以外のプレイヤーのリスト.
             p.assign_doubt(p.input_doubt(others))
             pleaseEnter(5)
         else:
-            print('ブラフモードでないため,このフェイズはパスとなります.')
+            print('ダウトモードでないため,このフェイズはパスとなります.')
             pleaseEnter(3)
 
 def detectPhase(jp, players):

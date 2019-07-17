@@ -140,7 +140,7 @@ class Dealer:
         """
         デュエルが行われるか確認する関数.
         """
-        if higher.money >= lower.money*5: #所持金の差が5倍以上ならTrueを返す.
+        if higher.money >= lower.money*3: #所持金の差が5倍以上ならTrueを返す.
             higher.target = lower
             return True
         else:
