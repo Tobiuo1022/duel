@@ -192,14 +192,11 @@ class Player:
         """
         カウンターを実行する関数.
         """
-        steal = self.bet
+        steal = self.bet + self.counter
         self.money += steal
         doubter.money -= steal
-        bonus = self.counter
-        self.money += bonus
         self.counter = 0
         print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
-        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ str(bonus) +'円をお支払いします.')
 
     def duel(self, c, jp):
         """
