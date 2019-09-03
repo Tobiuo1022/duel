@@ -80,7 +80,8 @@ def betPhase(players):
         p.yourTurn()
         p.assign_mode(p.input_mode())
         p.assign_predict(p.input_predict())
-        p.assign_bet(p.input_bet())
+        p.input_bet()
+        p.assign_bet()
         p.print_bet()
         pleaseEnter(9)
 
@@ -89,7 +90,7 @@ def callPhase(c, players):
     for p in players:
         p.yourTurn()
         p.assign_call(c.num, p.input_call(c.num))
-        pleaseEnter(5)
+        pleaseEnter(6)
 
 def doubtPhase(players):
     print('\n-- DoubtPhase --')

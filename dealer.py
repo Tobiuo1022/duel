@@ -46,7 +46,7 @@ class Dealer:
     def announce_bet(self, players):
         print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
+            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'('+ str(p.bet_choice) +')] [所持金 '+str(p.money) +']')
 
     def announce_call(self, coin, players):
         for p in players:

@@ -9,6 +9,7 @@ class Player:
     mode = None #選択したモード
     predict = 0 #予想した面.
     bet_choices = [] #賭け金の選択肢.
+    bet_choice = None #選択した掛け金の割合.
     bet = 0 #賭け金
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
@@ -62,13 +63,13 @@ class Player:
         print('賭ける金額を選択してください.', end='')
         print_choices(choices)
         ans = select(choices) #入力
-        choice = self.bet_choices.pop(ans-1)
-        return choice
+        self.bet_choice = self.bet_choices.pop(ans-1)
 
-    def assign_bet(self, choice):
+    def assign_bet(self):
         """
         賭け金を代入する関数.
         """
+        choice = self.bet_choice
         bet_rate = 0
         if choice == '10%':
             bet_rate = 0.1
@@ -99,6 +100,7 @@ class Player:
         返り値 :
             call : コールなら0,フォールドなら1が入る.
         """
+        print('あなたのモード : '+ str(self.mode))
         print('あなたの予想 : '+ coin.conversion(self.predict) +' ', end='')
         choices = ['Call', 'Fold']
         if self.predict == c_num: #プレイヤーの予想とコインが一致してるかの判定
@@ -251,6 +253,7 @@ class Player:
             self.bet_choices = ['10%', '15%', '20%', '25%', '30%']
         self.mode = None
         self.predict = 0
+        self.bet_choice = None
         self.bet = 0
         self.isCall = False
         self.bluff = 0
