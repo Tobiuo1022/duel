@@ -3,6 +3,12 @@ import player
 class Jackpot:
     money = 0
 
+    def calculateJP(self, players):
+        sum = 0 #全プレイヤーの所持金の合計.
+        for player in players:
+            sum += player.money
+        self.money = sum
+
     def payJP(self, players):
         sum = 0 #全プレイヤーの表の合計.
         for p in players:

@@ -9,7 +9,7 @@ def play(d, players):
         lower = d.return_lower(players)
         if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
             print('')
-            d.announce_jp(jp) #ジャックポットの金額を公表.
+            d.announce_jp(jp, players) #ジャックポットの金額を公表.
             print('')
             d.announce_state(players) #各プレイヤーの所持金を公表.
             pleaseEnter(1)
@@ -17,7 +17,7 @@ def play(d, players):
             duelPhase(c, jp, higher, lower) #デュエルフェイズ.
             if d.checkFinish(players) == True: #higherが勝てばゲーム終了.
                 break
-            d.announce_jp(jp) #ジャックポットの金額を公表.
+            d.announce_jp(jp, players) #ジャックポットの金額を公表.
             print('')
             d.announce_state(players) #各プレイヤーの所持金を公表.
             pleaseEnter(1)
@@ -27,7 +27,7 @@ def play(d, players):
         round += 1
         print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
-        d.announce_jp(jp) #ジャックポットの金額を公表.
+        d.announce_jp(jp, players) #ジャックポットの金額を公表.
         print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
@@ -53,7 +53,7 @@ def play(d, players):
         d.announce_doubt(players) #各プレイヤーのダウト先を公表.
         pleaseEnter(1)
 
-        detectPhase(jp, players) #ディテクトフェイズ.
+        detectPhase(players) #ディテクトフェイズ.
 
         payPhase(c, jp, d, players) #ペイフェイズ.
 
@@ -104,10 +104,10 @@ def doubtPhase(players):
             print('ダウトモードでないため,このフェイズはパスとなります.')
             pleaseEnter(3)
 
-def detectPhase(jp, players):
+def detectPhase(players):
     for p in players:
         if p.doubt != None:
-            p.detect(jp)
+            p.detect()
             pleaseEnter(1)
 
 def payPhase(c, jp, d, players):
@@ -137,7 +137,7 @@ def duelPhase(c, jp, higher, lower):
 
 def jackpotTime(jp, d, players):
     print('\n-- JackPotTime --')
-    d.announce_jp(jp)
+    d.announce_jp(jp, players)
     for p in players: #ジャックポットの配当の割合を決定.
         p.yourTurn()
         p.challenge(c)

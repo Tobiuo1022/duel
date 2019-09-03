@@ -163,7 +163,7 @@ class Player:
         """
         self.doubt = doubt
 
-    def detect(self, jp):
+    def detect(self):
         """
         指定した相手にダウトを行い,所持金の増減を行う関数.
         """
@@ -195,10 +195,11 @@ class Player:
         steal = self.bet
         self.money += steal
         doubter.money -= steal
-        self.money += self.counter
+        bonus = self.counter
+        self.money += bonus
         self.counter = 0
         print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
-        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ str(self.counter) +'円をお支払いします.')
+        print('さらに,カウンター成功のボーナスとして'+ self.name +'さんへ'+ str(bonus) +'円をお支払いします.')
 
     def duel(self, c, jp):
         """
@@ -225,7 +226,7 @@ class Player:
             jp.money += penalty #損失額がジャックポットへ流れる.
             print('防衛に成功しました.'+ str(penalty) +'円が'+ higher.name +'から没収されます.')
         else: #デュエルの防衛に失敗.
-            penalty = int(higher.money/5)
+            penalty = int(higher.money/3)
             self.money -= penalty
             jp.money += penalty #損失額がジャックポットへ流れる.
             print('防衛に失敗しました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')

@@ -34,7 +34,8 @@ class Dealer:
             p = player.Player(n+1, name)
             players.append(p)
 
-    def announce_jp(self, jp):
+    def announce_jp(self, jp, players):
+        jp.calculateJP(players)
         print('ジャックポット : '+ str(jp.money) +'円')
 
     def announce_state(self, players):
@@ -109,7 +110,6 @@ class Dealer:
             p.money += bonus
             print(p.name +'へ'+ str(bonus) +'円をお支払いします.')
         else:
-            jp.money += p.bet #損失額がジャックポットへ流れる.
             print('残念ですが'+ p.name +'の賭金は没収となります.')
 
     def return_higher(self, players):
@@ -140,7 +140,7 @@ class Dealer:
         """
         デュエルが行われるか確認する関数.
         """
-        if higher.money >= lower.money*3: #所持金の差が5倍以上ならTrueを返す.
+        if higher.money >= lower.money*3: #所持金の差が3倍以上ならTrueを返す.
             higher.target = lower
             return True
         else:
