@@ -175,8 +175,6 @@ class Player:
 
         if doubt.bluff == 1: #ダウト成功.
             steal = doubt.bet
-            if doubt.mode == 'ダウト': #奪う額が半減する.
-                steal = int(steal/2)
             if doubt.mode == 'トリプルアップ': #奪う額が2倍になる.
                 steal *= 2
             self.money += steal
