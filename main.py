@@ -5,34 +5,16 @@ def play(d, players):
     round = 0
     while d.checkFinish(players) == False: #ゲームが終了するかの判定.
 
-        higher = d.return_higher(players)
-        lower = d.return_lower(players)
-        if d.checkDuel(higher, lower) == True: #デュエルが行われるかの判定.
-            print('')
-            d.announce_jp(jp, players) #ジャックポットの金額を公表.
-            print('')
-            d.announce_state(players) #各プレイヤーの所持金を公表.
-            pleaseEnter(1)
-
-            duelPhase(c, jp, higher, lower) #デュエルフェイズ.
-            if d.checkFinish(players) == True: #higherが勝てばゲーム終了.
-                break
-            d.announce_jp(jp, players) #ジャックポットの金額を公表.
-            print('')
-            d.announce_state(players) #各プレイヤーの所持金を公表.
-            pleaseEnter(1)
-            jackpotTime(jp, d, players) #ジャックポットタイム.
-            continue
-
         round += 1
         print('\n-- '+ str(round) +'Round --') #ラウンド数.
 
-        d.announce_jp(jp, players) #ジャックポットの金額を公表.
         print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
 
-        betPhase(players) #ベットフェイズ
+        d.calcMinimum(players)
+
+        betPhase(players, d.minimumBet) #ベットフェイズ
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
         pleaseEnter(1)
 
@@ -55,7 +37,7 @@ def play(d, players):
 
         detectPhase(players) #ディテクトフェイズ.
 
-        payPhase(c, jp, d, players) #ペイフェイズ.
+        payPhase(c, d, players) #ペイフェイズ.
 
         if len(dc.cards) < len(players):
             dc.shuffle()
@@ -74,14 +56,18 @@ def dealPhase(dc, players):
         for i in range(4):
             dc.deal_cards(p)
 
-def betPhase(players):
+def betPhase(players, minimumBet):
     print('\n-- BetPhase --')
     for p in players:
         p.yourTurn()
         p.assign_mode(p.input_mode())
         p.assign_predict(p.input_predict())
-        p.input_bet()
-        p.assign_bet()
+        bet = 0
+        if p.money <= minimumBet:
+            bet = p.input_minimum(minimumBet)
+        else:
+            bet = p.input_bet(minimumBet)
+        p.assign_bet(bet)
         p.print_bet()
         pleaseEnter(9)
 
@@ -111,45 +97,11 @@ def detectPhase(players):
             p.detect()
             pleaseEnter(1)
 
-def payPhase(c, jp, d, players):
+def payPhase(c, d, players):
     print('\n-- PayPhase --')
     for p in players:
-        d.pay(c, jp, p)
+        d.pay(c, p)
     pleaseEnter(1)
-
-def duelPhase(c, jp, higher, lower):
-    print('\n-- DuelPhase --')
-    print(higher.name +'さんが'+ lower.name +'さんへデュエルを行います.')
-
-    print(higher.name +'さん.')
-    pleaseEnter(1)
-    c.toss()
-    success = higher.duel(c, jp) #攻撃側のコイントス.
-    pleaseEnter(1)
-    print('')
-
-    if success == True:
-        print(lower.name +'さん.')
-        pleaseEnter(1)
-        c.toss()
-        lower.defense(c, jp, higher) #防衛側のコイントス.
-        pleaseEnter(1)
-        print('')
-
-def jackpotTime(jp, d, players):
-    print('\n-- JackPotTime --')
-    d.announce_jp(jp, players)
-    for p in players: #ジャックポットの配当の割合を決定.
-        p.yourTurn()
-        p.challenge(c)
-    pleaseEnter(1)
-    print('')
-
-    jp.payJP(players) #ジャックポットの配当.
-    pleaseEnter(1)
-
-    for p in players:
-        p.payRatio = 0
 
 def pleaseEnter(num):
         """
@@ -163,9 +115,8 @@ def pleaseEnter(num):
         print('\u001b[%dA\u001b[0J' % num, end='')
 
 if __name__ == '__main__':
-    import coin, jackpot, deck, dealer, player, sys
+    import coin, deck, dealer, player, sys
     c = coin.Coin()
-    jp = jackpot.Jackpot()
     dc = deck.Deck()
     d = dealer.Dealer()
     players = []

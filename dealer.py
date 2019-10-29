@@ -1,6 +1,8 @@
-import main, coin, jackpot, player
+import main, coin, player
 
 class Dealer:
+    minimumBet = 0
+    minimumRate = 0.05
 
     def entry_num(self):
         print('参加人数を入力してください')
@@ -34,10 +36,6 @@ class Dealer:
             p = player.Player(n+1, name)
             players.append(p)
 
-    def announce_jp(self, jp, players):
-        jp.calculateJP(players)
-        print('ジャックポット : '+ str(jp.money) +'円')
-
     def announce_state(self, players):
         print('各プレイヤーの所持金とカウンターの値です.')
         for p in players:
@@ -46,7 +44,7 @@ class Dealer:
     def announce_bet(self, players):
         print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'('+ str(p.bet_choice) +')] [所持金 '+str(p.money) +']')
+            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
 
     def announce_call(self, coin, players):
         for p in players:
@@ -76,6 +74,15 @@ class Dealer:
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
 
+    def calcMinimum(self, players):
+        self.minimumRate += 0.05
+        if self.minimumRate > 0.5: #上限は5割まで.
+            self.minimumRate = 0.5
+
+        higher = self.return_higher(players)
+        minimum = int(higher.money * self.minimumRate)
+        self.minimumBet = minimum
+
     def delete_overlap_doubt(self, players):
         """
         複数のプレイヤーで重複したダウトを消す関数.
@@ -97,7 +104,7 @@ class Dealer:
             if lowest != None: #最も所持金の低いプレイヤーのみがダウトできる.
                 lowest.doubt = p
 
-    def pay(self, c, jp, p):
+    def pay(self, c, p):
         """
         お金を清算する関数.
         """

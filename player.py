@@ -8,18 +8,14 @@ class Player:
     hands = [] #モードの手札.
     mode = None #選択したモード
     predict = 0 #予想した面.
-    bet_choices = [] #賭け金の選択肢.
-    bet_choice = None #選択した掛け金の割合.
     bet = 0 #賭け金
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = None #ダウト先のプレイヤー.
-    payRatio = 0 #ジャックポットの配当の割合.
 
     def __init__(self, playerNo, name):
         self.playerNo = playerNo
         self.name = name
-        self.bet_choices = ['10%', '15%', '20%', '25%', '30%']
         self.hands = []
 
     def input_mode(self):
@@ -55,34 +51,39 @@ class Player:
         """
         self.predict = predict
 
-    def input_bet(self):
+    def input_minimum(self, minimumBet):
+        print('所持金が最低額に達していないので全額を賭けます.')
+        bet = minimumBet
+        return bet
+
+    def input_bet(self, minimumBet):
         """
         賭け金を選択する関数.
         """
-        choices = self.bet_choices
-        print('賭ける金額を選択してください.', end='')
-        print_choices(choices)
-        ans = select(choices) #入力
-        self.bet_choice = self.bet_choices.pop(ans-1)
+        print('賭ける金額を入力してください. (最低額 : '+ str(minimumBet) +')')
+        while True:
+            try:
+                bet = int(input())
+            except ValueError: #int型以外を入力された場合.
+                print('\u001b[2A\u001b[0J', end='')
+                print('int型で入力してください. (最低額 : '+ str(minimumBet) +')')
+                continue
+            if minimumBet > bet:
+                print('\u001b[2A\u001b[0J', end='')
+                print('最低額以上を賭けてください. (最低額 : '+ str(minimumBet) +')')
+            elif bet > self.money:
+                print('\u001b[2A\u001b[0J', end='')
+                print('所持金を超過しています. (最低額 : '+ str(minimumBet) +')')
+            else:
+                break
+        return bet
 
-    def assign_bet(self):
+    def assign_bet(self, bet):
         """
         賭け金を代入する関数.
         """
-        choice = self.bet_choice
-        bet_rate = 0
-        if choice == '10%':
-            bet_rate = 0.1
-        elif choice == '15%':
-            bet_rate = 0.15
-        elif choice == '20%':
-            bet_rate = 0.2
-        elif choice == '25%':
-            bet_rate = 0.25
-        else:
-            bet_rate = 0.30
-        self.bet = int(self.money * bet_rate)
-        self.money -= self.bet
+        self.bet = bet
+        self.money -= bet
 
     def print_bet(self):
         """
@@ -247,11 +248,8 @@ class Player:
         else:
             decrease = int(self.counter/4) #ラウンド毎に4分の1減少.
             self.counter -= decrease
-        if self.bet_choices == []:
-            self.bet_choices = ['10%', '15%', '20%', '25%', '30%']
         self.mode = None
         self.predict = 0
-        self.bet_choice = None
         self.bet = 0
         self.isCall = False
         self.bluff = 0
