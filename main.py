@@ -18,6 +18,8 @@ def play(d, players):
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
         pleaseEnter(1)
 
+        modePhase(players) #モードフェイズ
+
         print('\n-- CoinToss --') #コイントス
         c.toss()
         pleaseEnter(1)
@@ -60,7 +62,6 @@ def betPhase(players, minimumBet):
     print('\n-- BetPhase --')
     for p in players:
         p.yourTurn()
-        p.assign_mode(p.input_mode())
         p.assign_predict(p.input_predict())
         bet = 0
         if p.money <= minimumBet:
@@ -69,7 +70,14 @@ def betPhase(players, minimumBet):
             bet = p.input_bet(minimumBet)
         p.assign_bet(bet)
         p.print_bet()
-        pleaseEnter(9)
+        pleaseEnter(7)
+
+def modePhase(players):
+    print('\n-- ModePhase --')
+    for p in players:
+        p.yourTurn()
+        p.assign_mode(p.input_mode())
+        pleaseEnter(4)
 
 def callPhase(c, players):
     print('\n-- Call or Fold --')

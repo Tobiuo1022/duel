@@ -9,6 +9,7 @@ class Player:
     mode = None #選択したモード
     predict = 0 #予想した面.
     bet = 0 #賭け金
+    betRate = 0
     isCall = False #通常はFalse,コールするならTrueが入る.
     bluff = 0 #通常は0,嘘をつくと1が入る.
     doubt = None #ダウト先のプレイヤー.
@@ -35,6 +36,12 @@ class Player:
         """
         self.mode = mode
 
+    def print_mode(self):
+        """
+        ベットの内容をプリントする関数.
+        """
+        print(self.mode +'を選択しました.')
+
     def input_predict(self):
         """
         コイントスの予想を標準入力する関数.
@@ -53,7 +60,7 @@ class Player:
 
     def input_minimum(self, minimumBet):
         print('所持金が最低額に達していないので全額を賭けます.')
-        bet = minimumBet
+        bet = self.money
         return bet
 
     def input_bet(self, minimumBet):
@@ -82,6 +89,7 @@ class Player:
         """
         賭け金を代入する関数.
         """
+        self.betRate = self.bet/self.money
         self.bet = bet
         self.money -= bet
 
@@ -89,7 +97,7 @@ class Player:
         """
         ベットの内容をプリントする関数.
         """
-        print(self.mode +'モードで'+ coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
+        print(coin.conversion(self.predict) +'に'+ str(self.bet) +'円を賭けました.')
 
     def input_call(self, c_num):
         """

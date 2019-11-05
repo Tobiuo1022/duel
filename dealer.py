@@ -2,7 +2,7 @@ import main, coin, player
 
 class Dealer:
     minimumBet = 0
-    minimumRate = 0.05
+    minimumRate = 0.08
 
     def entry_num(self):
         print('参加人数を入力してください')
@@ -44,7 +44,8 @@ class Dealer:
     def announce_bet(self, players):
         print('各プレイヤーの賭けた内容を公表します.')
         for p in players:
-            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +'] [所持金 '+str(p.money) +']')
+            betRate = int(p.betRate*100)
+            print(str(p.name) +'さん : [賭け金 '+ str(p.bet) +' ('+str(betRate)+'%)] [所持金 '+str(p.money) +']')
 
     def announce_call(self, coin, players):
         for p in players:
@@ -75,7 +76,7 @@ class Dealer:
                 print(doubter.name +' → '+ doubted.name)
 
     def calcMinimum(self, players):
-        self.minimumRate += 0.05
+        self.minimumRate += 0.02
         if self.minimumRate > 0.5: #上限は5割まで.
             self.minimumRate = 0.5
 
