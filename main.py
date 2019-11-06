@@ -1,6 +1,6 @@
 def play(d, players):
     print('\nゲームを開始します.')
-    dealPhase(dc, players)
+    dealPhase(dc, players) #カードを配る.
     pleaseEnter(1)
     round = 0
     while d.checkFinish(players) == False: #ゲームが終了するかの判定.
@@ -11,13 +11,10 @@ def play(d, players):
         print('')
         d.announce_state(players) #各プレイヤーの所持金を公表.
         pleaseEnter(1)
-
-        d.calcMinimum(players)
-
+        d.calcMinimum(players) #賭け金の最低額を設定.
         betPhase(players, d.minimumBet) #ベットフェイズ
         d.announce_bet(players) #各プレイヤーの賭け金を公表.
         pleaseEnter(1)
-
         modePhase(players) #モードフェイズ
 
         print('\n-- CoinToss --') #コイントス
@@ -41,12 +38,10 @@ def play(d, players):
 
         payPhase(c, d, players) #ペイフェイズ.
 
-        if len(dc.cards) < len(players):
+        if len(dc.cards) < len(players): #デッキが切れたらシャッフル.
             dc.shuffle()
-
-        for p in players:
+        for p in players: #プレイヤーにカードを配る.
             dc.deal_cards(p)
-
         for p in players:
             p.updateValue() #値の更新.
 
@@ -64,8 +59,8 @@ def betPhase(players, minimumBet):
         p.yourTurn()
         p.assign_predict(p.input_predict())
         bet = 0
-        if p.money <= minimumBet:
-            bet = p.input_minimum(minimumBet)
+        if p.money <= minimumBet: #所持金が賭け金の最低額に達しない.
+            bet = p.input_minimum(minimumBet) #強制全額ベット.
         else:
             bet = p.input_bet(minimumBet)
         p.assign_bet(bet)
@@ -79,11 +74,11 @@ def modePhase(players):
         p.assign_mode(p.input_mode())
         pleaseEnter(4)
 
-def callPhase(c, players):
+def callPhase(coin, players):
     print('\n-- Call or Fold --')
     for p in players:
         p.yourTurn()
-        p.assign_call(c.num, p.input_call(c.num))
+        p.assign_call(coin.num, p.input_call(coin.num))
         pleaseEnter(6)
 
 def doubtPhase(players):
@@ -101,7 +96,7 @@ def doubtPhase(players):
 
 def detectPhase(players):
     for p in players:
-        if p.doubt != None:
+        if p.doubt != None: #ダウトしていない場合,この処理は行われない.
             p.detect()
             pleaseEnter(1)
 
@@ -114,6 +109,7 @@ def payPhase(c, d, players):
 def pleaseEnter(num):
         """
         Please Enterを出力し,引数numの値だけ出力された行を消す関数.
+        各プレイヤーの入力を消したりするのに使う.
 
         引数 :
         num : 消す行数の数.

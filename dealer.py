@@ -5,6 +5,10 @@ class Dealer:
     minimumRate = 0.08
 
     def entry_num(self):
+        """
+        参加人数を決定する関数.
+        int型以外の入力と1以下の入力は弾く.
+        """
         print('参加人数を入力してください')
         while True:
             try:
@@ -23,7 +27,8 @@ class Dealer:
 
     def entry(self, players, num):
         """
-        名前被りに対応していない.
+        各プレイヤーの名前を入力する関数.
+        各プレイヤーにplayer.playerNOとplayer.nameをつけてあげる.
         """
         for n in range(num):
             print(str(n+1) +'人目の名前を入力してください.')
@@ -63,6 +68,8 @@ class Dealer:
         print('ダウトの結果を公表します.')
         main.pleaseEnter(1)
 
+        #誰もダウトをしていない場合の処理.
+        #誰かがダウトしている場合はこの処理はすり抜ける.
         count = 0
         for doubter in players:
             if doubter.doubt != None:
@@ -70,23 +77,31 @@ class Dealer:
         if count == 0: #count == 0 → 誰もダウトをしていない.
             print('ダウトしたプレイヤーはいませんでした.')
 
+        #誰かがダウトした場合の処理.
+        #誰もダウトをしていない場合はこの処理はすり抜ける.
         for doubter in players:
             doubted = doubter.doubt
             if doubted != None:
                 print(doubter.name +' → '+ doubted.name)
 
     def calcMinimum(self, players):
+        """
+        self.minimumBetとself.minimumRateを計算する関数.
+        """
+        #self.minimumRateの計算.
         self.minimumRate += 0.02
         if self.minimumRate > 0.5: #上限は5割まで.
             self.minimumRate = 0.5
 
-        higher = self.return_higher(players)
-        minimum = int(higher.money * self.minimumRate)
-        self.minimumBet = minimum
+        #self.minimumBetの計算.
+        #self.minimumBetは最も所持金の多いプレイヤーの所持金に依存する.
+        higher = self.return_higher(players) #最も所持金の多いプレイヤーを代入.
+        self.minimumBet = int(higher.money * self.minimumRate)
 
     def delete_overlap_doubt(self, players):
         """
         複数のプレイヤーで重複したダウトを消す関数.
+        重複した場合,所持金の低いプレイヤーのダウトが優先される.
         """
         for p in players:
             doubters = [] #自分を疑っているプレイヤー.
@@ -98,27 +113,27 @@ class Dealer:
             lowest = None
             minimum = float('inf') #無限
             for doubter in doubters:
-                doubter.doubt = None #一旦全員のダウトを0にする.
+                doubter.doubt = None #一旦全員のplayer.doubtをNoneにする.
                 if doubter.money < minimum: #所持金の低いプレイヤーが優先.
                     lowest = doubter
                     minimum = doubter.money
             if lowest != None: #最も所持金の低いプレイヤーのみがダウトできる.
-                lowest.doubt = p
+                lowest.doubt = p #lowestのplayer.doubtを再設定.
 
-    def pay(self, c, p):
+    def pay(self, coin, player):
         """
         お金を清算する関数.
         """
         rate = 2
-        if p.predict == c.num: #予想が的中した場合(嘘含む).
-            if p.mode == 'トリプルアップ' and p.isCall == True and p.bluff == 1: #トリプルアップ適用.
+        if player.predict == coin.num: #予想が的中した場合(嘘含む).
+            if player.mode == 'トリプルアップ' and player.isCall == True and player.bluff == 1: #トリプルアップ適用.
                 rate *= 3
                 print('トリプルアップ成功です.', end='')
-            bonus = p.bet*rate #勝利金
-            p.money += bonus
-            print(p.name +'へ'+ str(bonus) +'円をお支払いします.')
+            bonus = player.bet*rate #勝利金
+            player.money += bonus
+            print(player.name +'へ'+ str(bonus) +'円をお支払いします.')
         else:
-            print('残念ですが'+ p.name +'の賭金は没収となります.')
+            print('残念ですが'+ player.name +'の賭金は没収となります.')
 
     def return_higher(self, players):
         """
@@ -131,28 +146,6 @@ class Dealer:
                 maximum = p.money
                 higher = p
         return higher
-
-    def return_lower(self, players):
-        """
-        最も所持金の低いプレイヤーを返す関数.
-        """
-        lower = None
-        minimum = float('inf') #無限
-        for p in players:
-            if p.money <= minimum:
-                minimum = p.money
-                lower = p
-        return lower
-
-    def checkDuel(self, higher, lower):
-        """
-        デュエルが行われるか確認する関数.
-        """
-        if higher.money >= lower.money*3: #所持金の差が3倍以上ならTrueを返す.
-            higher.target = lower
-            return True
-        else:
-            return False
 
     def checkFinish(self, players):
         """
@@ -174,8 +167,8 @@ class Dealer:
         main.pleaseEnter(1)
         print('') #空白行
 
-        winners = []
-        losers = []
+        winners = [] #同率1位を考慮してリスト型.
+        losers = [] #複数人飛んだ時を考慮してリスト型.
         maximum = 0 #所持金の最大値
         for p in players:
             if p.money <= 0: #所持金が0になった時

@@ -59,13 +59,17 @@ class Player:
         self.predict = predict
 
     def input_minimum(self, minimumBet):
+        """
+        所持金が最低額に達してない時の関数.
+        """
         print('所持金が最低額に達していないので全額を賭けます.')
         bet = self.money
         return bet
 
     def input_bet(self, minimumBet):
         """
-        賭け金を選択する関数.
+        賭け金を標準入力する関数.
+        入力がおかしいと弾く.
         """
         print('賭ける金額を入力してください. (最低額 : '+ str(minimumBet) +')')
         while True:
@@ -89,8 +93,8 @@ class Player:
         """
         賭け金を代入する関数.
         """
-        self.betRate = self.bet/self.money
         self.bet = bet
+        self.betRate = self.bet/self.money
         self.money -= bet
 
     def print_bet(self):
@@ -142,16 +146,9 @@ class Player:
                 self.bluff = 0
         self.predict = (self.predict + self.bluff)%2 #嘘をついた場合,self.predictがひっくり返る.
 
-    def print_call(self):
-        """
-        コールの内容をプリントする関数.
-        メッセージの内容は未定.
-        """
-        pass
-
     def input_doubt(self, players):
         """
-        ダウトする相手を標準入力する関数.
+        ダウトする相手を選択する関数.
         """
         choices = []
         for p in players:
@@ -207,42 +204,6 @@ class Player:
         self.counter = 0
         print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
 
-    def duel(self, c, jp):
-        """
-        デュエルを行う関数.
-        """
-        if c.num == 0: #デュエルの実行に成功.
-            success = True
-            print('デュエルの実行に成功しました.')
-        else: #デュエルの実行に失敗.
-            penalty = int(self.money/2)
-            self.money -= penalty
-            jp.money += penalty #損失額がジャックポットへ流れる.
-            print('デュエルの実行に失敗しました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
-            success = False
-        return success
-
-    def defense(self, c, jp, higher):
-        """
-        デュエルから防衛する関数.
-        """
-        if c.num == 0: #デュエルの防衛に成功.
-            penalty = int(higher.money/2)
-            higher.money -= penalty
-            jp.money += penalty #損失額がジャックポットへ流れる.
-            print('防衛に成功しました.'+ str(penalty) +'円が'+ higher.name +'から没収されます.')
-        else: #デュエルの防衛に失敗.
-            penalty = int(higher.money/3)
-            self.money -= penalty
-            jp.money += penalty #損失額がジャックポットへ流れる.
-            print('防衛に失敗しました.'+ str(penalty) +'円が'+ self.name +'から没収されます.')
-
-    def challenge(self, c):
-        result = c.toss3()
-        for num in result:
-            if num == 0:
-                self.payRatio += 1
-
     def updateValue(self):
         """
         各プレイヤーの持っている値をリセットする.
@@ -288,7 +249,7 @@ def select(choices):
             continue
         if 0 < ans and ans <= limmit:
             break
-        else:
+        else: #選択肢から外れた数字を入力した場合.
             print('\u001b[2A\u001b[0J', end='')
             print('選択肢からお選びください.', end='')
             print_choices(choices)
