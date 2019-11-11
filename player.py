@@ -1,4 +1,4 @@
-import main, coin, jackpot, math
+import main, coin, math
 
 class Player:
     playerNo = 0 #プレイヤーの番号.
@@ -38,7 +38,7 @@ class Player:
 
     def print_mode(self):
         """
-        ベットの内容をプリントする関数.
+        モードの内容をプリントする関数.
         """
         print(self.mode +'を選択しました.')
 
@@ -146,6 +146,9 @@ class Player:
                 self.bluff = 0
         self.predict = (self.predict + self.bluff)%2 #嘘をついた場合,self.predictがひっくり返る.
 
+    def print_dontDoubt(self):
+        print('ダウトモードでないため,このフェイズはパスとなります.')
+
     def input_doubt(self, players):
         """
         ダウトする相手を選択する関数.
@@ -203,6 +206,9 @@ class Player:
         doubter.money -= steal
         self.counter = 0
         print('カウンターにより'+ str(steal) +'円が'+ doubter.name +'から'+ self.name +'へ移動します.')
+        doubter.predict -= doubter.bluff #doubter.predictを本来の結果に戻す.
+        if doubter.bluff == 1:
+            print('さらに,ペナルティとして'+ doubter.name +'のブラフを無効とします.')
 
     def updateValue(self):
         """
@@ -210,12 +216,12 @@ class Player:
         カウンターは更新する.
         """
         if self.isCall == False:
-            if self.mode == 'カウンター': #カウンターでフォールドした場合,カウンターの値が保持される.
-                self.counter += self.bet
-            else:
-                self.counter = self.bet
+            crease = self.bet #フォールドした場合,カウンターに値が加算される.
+            if self.mode == 'カウンター': #カウンターでフォールドした場合,加算量が2倍.
+                crease *= 2
+            self.counter += crease
         else:
-            decrease = int(self.counter/4) #ラウンド毎に4分の1減少.
+            decrease = int(self.counter/4) #フォールドしていない場合,ラウンド毎に4分の1減少.
             self.counter -= decrease
         self.mode = None
         self.predict = 0
@@ -267,6 +273,13 @@ def print_choices(choices):
         if n != len(choices)-1: #nがchoicesの最終要素でない時.
             print(', ', end='')
     print(')')
+
+def you_are_bot():
+    choices = ['Bot', 'Human']
+    print('あなたはBotですか？', end='')
+    print_choices(choices)
+    ans = select(choices)-1 #入力
+    return ans
 
 if __name__ == '__main__':
     import doctest

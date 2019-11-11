@@ -1,4 +1,4 @@
-import main, coin, player
+import main, coin, player, Bot
 
 class Dealer:
     minimumBet = 0
@@ -25,21 +25,32 @@ class Dealer:
                 print('それではゲームを始められません.')
         return num
 
-    def entry(self, players, num):
+    def naming(self, players, playerNo):
         """
-        各プレイヤーの名前を入力する関数.
-        各プレイヤーにplayer.playerNOとplayer.nameをつけてあげる.
+        プレイヤーの名前を入力する関数.
         """
-        for n in range(num):
-            print(str(n+1) +'人目の名前を入力してください.')
+        print(str(playerNo) +'人目の名前を入力してください.')
+        name = str(input())
+        while name == '':
+            print('\u001b[2A\u001b[0J', end='')
+            print(str(playerNo) +'人目の名前を入力してください.')
             name = str(input())
-            while name == '':
-                print('\u001b[2A\u001b[0J', end='')
-                print(str(n+1) +'人目の名前を入力してください.')
-                name = str(input())
 
-            p = player.Player(n+1, name)
-            players.append(p)
+        return name
+
+    def entry(self, players, playerNo, name):
+        """
+        プレイヤーを参加させる関数.
+        """
+        p = player.Player(playerNo, name)
+        players.append(p)
+
+    def entryBot(self, players, playerNo, name):
+        """
+        プレイヤーを参加させる関数.
+        """
+        p = Bot.Bot(playerNo, name)
+        players.append(p)
 
     def announce_state(self, players):
         print('各プレイヤーの所持金とカウンターの値です.')

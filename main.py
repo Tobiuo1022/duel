@@ -91,7 +91,7 @@ def doubtPhase(players):
             p.assign_doubt(p.input_doubt(others))
             pleaseEnter(5)
         else:
-            print('ダウトモードでないため,このフェイズはパスとなります.')
+            p.print_dontDoubt()
             pleaseEnter(3)
 
 def detectPhase(players):
@@ -124,7 +124,14 @@ if __name__ == '__main__':
     dc = deck.Deck()
     d = dealer.Dealer()
     players = []
-    d.entry(players, d.entry_num())
+    entryNum = d.entry_num()
+    for n in range(entryNum):
+        playerNo = len(players) + 1
+        name = d.naming(players, playerNo)
+        if player.you_are_bot() == 1:
+            d.entry(players, playerNo, name)
+        else:
+            d.entryBot(players, playerNo, name)
     play(d, players)
     import doctest
     doctest.testmod()
